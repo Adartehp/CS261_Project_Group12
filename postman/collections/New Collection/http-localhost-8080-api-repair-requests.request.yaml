@@ -1,0 +1,19 @@
+$kind: http-request
+name: http://localhost:8080/api/repair-requests
+description: ""
+url: http://localhost:8080/api/repair-requests
+method: POST
+body:
+  type: json
+  content: "{\r
+
+    \  \"requesterName\": \"ทดสอบระบบ\",\r
+
+    \  \"roomNumber\": \"B205\",\r
+
+    \  \"problemTitle\": \"ไฟเสีย\",\r
+
+    \  \"description\": \"ไฟในห้องไม่ติด\"\r
+
+    }"
+order: 1000
