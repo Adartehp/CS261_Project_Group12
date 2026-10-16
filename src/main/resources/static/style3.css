@@ -1,0 +1,274 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Sarabun', sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+}
+
+body {
+    background-color: #e0e0e0;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.navbar {
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 25px;
+}
+
+.menu-icon {
+    font-size: 24px;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.menu-icon:hover {
+    color: #333;
+}
+
+.profile-icon {
+    font-size: 24px;
+    color: #888;
+    background-color: #d0d0d0;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-container {
+    background-color: #ffffff;
+    flex: 1;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+    padding: 25px 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.page-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 25px;
+    color: #111;
+}
+
+.form-card {
+    background-color: #f7f7f7;
+    border-radius: 16px;
+    padding: 20px 16px 25px 16px;
+    margin-bottom: 20px;
+}
+
+.input-group {
+    margin-bottom: 18px;
+    position: relative;
+}
+
+.input-group label {
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    color: #222;
+    margin-bottom: 8px;
+}
+
+.optional {
+    color: #888;
+    font-size: 13px;
+}
+
+.input-group input, 
+.input-group select, 
+.input-group textarea {
+    width: 100%;
+    background-color: #dcdcdc;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+    color: #666;
+}
+
+.select-wrapper {
+    position: relative;
+}
+
+.select-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    cursor: pointer;
+    color: #666;
+}
+
+.select-wrapper select:valid {
+    color: #333;
+}
+
+.arrow-icon {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #666;
+    pointer-events: none;
+    font-size: 14px;
+}
+
+.input-group textarea {
+    resize: none;
+    height: 100px;
+}
+
+.char-count {
+    text-align: right;
+    font-size: 12px;
+    color: #666;
+    margin-top: 4px;
+}
+
+.submit-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+}
+
+#submitBtn {
+    background-color: #b5b5b5;
+    color: #111;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 35px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+#submitBtn:hover {
+    background-color: #999;
+}
+
+#submitBtn:active {
+    transform: scale(0.98);
+}
+
+.bottom-bar {
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-start;
+    padding-bottom: 10px;
+}
+
+.back-btn {
+    background-color: #b5b5b5;
+    color: #111;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 28px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.back-btn:hover {
+    background-color: #999;
+}
+
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-card {
+    background-color: #ffffff;
+    width: 85%;
+    max-width: 320px;
+    border-radius: 16px;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    animation: popupAnimation 0.25s ease-out;
+}
+
+@keyframes popupAnimation {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.icon-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.icon-circle i {
+    font-size: 50px;
+    color: #666666;
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #111;
+    margin-bottom: 20px;
+}
+
+.close-btn {
+    background-color: #dcdcdc;
+    color: #333;
+    border: none;
+    border-radius: 12px;
+    padding: 8px 24px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+    background-color: #c0c0c0;
+}
