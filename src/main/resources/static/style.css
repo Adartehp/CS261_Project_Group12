@@ -1,0 +1,91 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; 
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden; 
+}
+
+body {
+    font-family: 'Sarabun', sans-serif;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+
+.navbar {
+    background-color: #dcdcdc;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
+    width: 100%;
+}
+
+.menu-icon {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 28px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.menu-icon span {
+    display: block;
+    height: 3.5px;
+    width: 100%;
+    background-color: #888888;
+    border-radius: 2px;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    max-width: 400px;
+}
+
+.role-btn {
+    background-color: #dcdcdc;
+    border: none;
+    border-radius: 10px;
+    padding: 22px 0;
+    font-size: 26px;
+    font-weight: 500;
+    color: #000000;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.15s ease, transform 0.1s ease;
+}
+
+.role-btn:active {
+    background-color: #cccccc;
+    transform: scale(0.97);
+}
+
+
+.footer-bar {
+    background-color: #dcdcdc;
+    height: 50px;
+    width: 100%;
+}
