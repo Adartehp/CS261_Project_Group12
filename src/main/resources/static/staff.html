@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ดูประวัติการแจ้งซ่อม</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <div class="menu-icon" id="menuBtn">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="profile-icon" id="profileBtn">
+            <svg viewBox="0 0 24 24" width="100%" height="100%">
+                <path fill="#888" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+            </svg>
+        </div>
+    </header>
+
+    <main class="container">
+        <h1 class="page-title">ประวัติ</h1>
+
+        <div class="main-scroll-container" id="notificationContainer">
+
+            <div class="card open-modal">
+                <div class="info-row">
+                    <span class="label">รหัสนักศึกษา :</span>
+                    <div class="skeleton-bar"></div>
+                </div>
+                <div class="info-row">
+                    <span class="label">รหัสห้องพัก :</span>
+                    <div class="skeleton-bar"></div>
+                </div>
+                <div class="info-row">
+                    <span class="label">รายการซ่อม :</span>
+                    <div class="skeleton-bar"></div>
+                </div>
+            </div>
+
+            <div class="card open-modal">
+                <div class="info-row">
+                    <span class="label">รหัสนักศึกษา :</span>
+                    <div class="skeleton-bar"></div>
+                </div>
+                <div class="info-row">
+                    <span class="label">รหัสห้องพัก :</span>
+                    <div class="skeleton-bar"></div>
+                </div>
+                <div class="info-row">
+                    <span class="label">รายการซ่อม :</span>
+                    <div class="skeleton-bar"></div>
+                </div>
+            </div>
+
+            <div class="card open-modal">
+                <div class="info-row">
+                    <span class="label">รหัสนักศึกษา :</span>
+                    <div class="skeleton-bar"></div>
+                </div>
+                <div class="info-row">
+                    <span class="label">รหัสห้องพัก :</span>
+                    <div class="skeleton-bar"></div>
+                </div>
+                <div class="info-row">
+                    <span class="label">รายการซ่อม :</span>
+                    <div class="skeleton-bar"></div>
+                </div>
+            </div>
+
+            <div class="card open-modal">
+                <div class="info-row">
+                    <span class="label">รหัสนักศึกษา :</span>
+                    <div class="skeleton-bar"></div>
+                </div>
+                <div class="info-row">
+                    <span class="label">รหัสห้องพัก :</span>
+                    <div class="skeleton-bar">/div>
+                </div>
+                <div class="info-row">
+                    <span class="label">รายการซ่อม :</span>
+                    <div class="skeleton-bar"></div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="footer-bar">
+        <button class="back-btn" id="backBtn">ย้อนกลับ</button>
+    </footer>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-box">
+            <div class="modal-row">
+                <span class="modal-label">รายการซ่อม :</span>
+                <div class="modal-input-sm"></div>
+            </div>
+            <div class="modal-column">
+                <span class="modal-label">รายละเอียดการซ่อม :</span>
+                <div class="modal-input-lg"></div>
+            </div>
+            <div class="modal-btn-container">
+                <button class="submit-btn" id="submitBtn">รับเรื่อง</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="scrips2.js"></script>
+</body>
+</html>
