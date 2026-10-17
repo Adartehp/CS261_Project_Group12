@@ -4,27 +4,30 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "repair_requests")
+@Table(name = "repair_requests_demo1")
 public class RepairRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "requester_name", nullable = false, length = 100)
-    private String requesterName;
+    @Column(name = "student_id", nullable = false, length = 20)
+    private String studentId;
 
     @Column(name = "room_number", nullable = false, length = 20)
     private String roomNumber;
 
-    @Column(name = "problem_title", nullable = false, length = 200)
-    private String problemTitle;
+    @Column(nullable = false, length = 30)
+    private String area;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "repair_item", nullable = false, length = 200)
+    private String repairItem;
+
+    @Column(length = 150)
     private String description;
 
-    @Column(name = "status", nullable = false, length = 30)
-    private String status = "PENDING";
+    @Column(nullable = false, length = 30)
+    private String status;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -32,12 +35,37 @@ public class RepairRequest {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @Column(name = "accepted_at")
+    private LocalDateTime acceptedAt;
+
+    protected RepairRequest() {
+    }
+
+    public RepairRequest(
+            String studentId,
+            String roomNumber,
+            String area,
+            String repairItem,
+            String description) {
+
+        this.studentId = studentId;
+        this.roomNumber = roomNumber;
+        this.area = area;
+        this.repairItem = repairItem;
+        this.description = description;
+        this.status = "PENDING";
+    }
+
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
-        if (status == null) status = "PENDING";
-        if (createdAt == null) createdAt = now;
-        if (updatedAt == null) updatedAt = now;
+
+        createdAt = now;
+        updatedAt = now;
+
+        if (status == null) {
+            status = "PENDING";
+        }
     }
 
     @PreUpdate
@@ -45,17 +73,43 @@ public class RepairRequest {
         updatedAt = LocalDateTime.now();
     }
 
-    public Long getId() { return id; }
-    public String getRequesterName() { return requesterName; }
-    public void setRequesterName(String value) { requesterName = value; }
-    public String getRoomNumber() { return roomNumber; }
-    public void setRoomNumber(String value) { roomNumber = value; }
-    public String getProblemTitle() { return problemTitle; }
-    public void setProblemTitle(String value) { problemTitle = value; }
-    public String getDescription() { return description; }
-    public void setDescription(String value) { description = value; }
-    public String getStatus() { return status; }
-    public void setStatus(String value) { status = value; }
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public Long getId() {
+        return id;
+    }
+
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public String getArea() {
+        return area;
+    }
+
+    public String getRepairItem() {
+        return repairItem;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public LocalDateTime getAcceptedAt() {
+        return acceptedAt;
+    }
 }

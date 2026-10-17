@@ -1,7 +1,10 @@
 package com.example.demo.controller;
 
 import com.example.demo.RepairRequest;
-import com.example.demo.repository.RepairRequestRepository;
+import com.example.demo.dto.CreateRepairRequest;
+import com.example.demo.service.RepairRequestService;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,21 +13,38 @@ import java.util.List;
 @RequestMapping("/api/repair-requests")
 public class RepairRequestController {
 
-    private final RepairRequestRepository repository;
+    private final RepairRequestService service;
 
     public RepairRequestController(
-            RepairRequestRepository repository) {
-        this.repository = repository;
+            RepairRequestService service) {
+
+        this.service = service;
     }
 
     @GetMapping
     public List<RepairRequest> getAll() {
-        return repository.findAll();
+        return service.getAll();
+    }
+
+    @GetMapping("/{id}")
+    public RepairRequest getById(
+            @PathVariable Long id) {
+
+        return service.getById(id);
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public RepairRequest create(
-            @RequestBody RepairRequest request) {
-        return repository.save(request);
+            @RequestBody CreateRepairRequest request) {
+
+        return service.create(request);
+    }
+
+    @PatchMapping("/{id}/accept")
+    public RepairRequest accept(
+            @PathVariable Long id) {
+
+        return service.accept(id);
     }
 }
