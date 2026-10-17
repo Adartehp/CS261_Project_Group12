@@ -31,7 +31,7 @@
                
                 <div class="input-group">
                     <label for="studentId">รหัสนักศึกษา</label>
-                    <input type="text" id="studentId" placeholder="รหัสนักศึกษา">
+                    <input type="text" id="studentId" maxlength="10" placeholder="รหัสนักศึกษา">
                 </div>
 
                
@@ -64,36 +64,35 @@
                     <div class="select-wrapper">
                         <select id="repairItem">
                             <option value="" disabled selected>เลือกสิ่งที่ต้องการซ่อม</option>
-                           <option value="ac">โต๊ะเครื่องแป้ง</option>
-                            <option value="ac">ชั้นวางของ</option>
-                            <option value="ac">บานเกล็ด</option>
-                            <option value="ac">สัญญาณโทรทัศน์</option>
-                            <option value="ac">พัดลมดูดอากาศ</option>
-                            <option value="ac">อื่นๆ</option>
-                            <option value="ac">อินเทอร์เน็ต</option>
-                            <option value="ac">กระจกเงา</option>
-                            <option value="ac">ลูกบิดประตู</option>
-                            <option value="ac">ผ้าม่าน</option>
-                            <option value="ac">ประตูมุ้งลวด</option>
-                            <option value="ac">ประตูกระจกบานเลื่อน</option>
-                            <option value="ac">ฟูกที่นอน</option>
-                            <option value="ac">ประตู</option>
-                            <option value="ac">หลอดไฟ</option>
-                            <option value="ac">สวิทซ์ไฟ</option>
-                            <option value="ac">รีโมทโทรทัศน์</option>
-                            <option value="ac">รีโมทเครื่องปรับอากาศ</option>
-                            <option value="ac">พัดลมเพดาน</option>
-                            <option value="ac">ตู้เย็น</option>
-                            <option value="ac">ปลั๊กไฟ</option>
-                            <option value="ac">โทรทัศน์</option>
-                            <option value="ac">เครื่องปรับอากาศ</option>
-                            <option value="ac">โต๊ะหัวเตียง</option>
-                            <option value="ac">โต๊ะรับประทานอาหาร</option>
-                            <option value="ac">โต๊ะทำงาน</option>
-                            <option value="ac">เตียง</option>
-                            <option value="ac">ตู้เสื้อผ้า</option>
-                            <option value="ac">ชั้นวางของ</option>
-                            <option value="ac">เก้าอี้</option>
+                            <option value="โต๊ะเครื่องแป้ง">โต๊ะเครื่องแป้ง</option>
+                            <option value="ชั้นวางของ">ชั้นวางของ</option>
+                            <option value="บานเกล็ด">บานเกล็ด</option>
+                            <option value="สัญญาณโทรทัศน์">สัญญาณโทรทัศน์</option>
+                            <option value="พัดลมดูดอากาศ">พัดลมดูดอากาศ</option>
+                            <option value="อื่นๆ">อื่นๆ</option>
+                            <option value="อินเทอร์เน็ต">อินเทอร์เน็ต</option>
+                            <option value="กระจกเงา">กระจกเงา</option>
+                            <option value="ลูกบิดประตู">ลูกบิดประตู</option>
+                            <option value="ผ้าม่าน">ผ้าม่าน</option>
+                            <option value="ประตูมุ้งลวด">ประตูมุ้งลวด</option>
+                            <option value="ประตูกระจกบานเลื่อน">ประตูกระจกบานเลื่อน</option>
+                            <option value="ฟูกที่นอน">ฟูกที่นอน</option>
+                            <option value="ประตู">ประตู</option>
+                            <option value="หลอดไฟ">หลอดไฟ</option>
+                            <option value="สวิทซ์ไฟ">สวิทซ์ไฟ</option>
+                            <option value="รีโมทโทรทัศน์">รีโมทโทรทัศน์</option>
+                            <option value="รีโมทเครื่องปรับอากาศ">รีโมทเครื่องปรับอากาศ</option>
+                            <option value="พัดลมเพดาน">พัดลมเพดาน</option>
+                            <option value="ตู้เย็น">ตู้เย็น</option>
+                            <option value="ปลั๊กไฟ">ปลั๊กไฟ</option>
+                            <option value="โทรทัศน์">โทรทัศน์</option>
+                            <option value="เครื่องปรับอากาศ">เครื่องปรับอากาศ</option>
+                            <option value="โต๊ะหัวเตียง">โต๊ะหัวเตียง</option>
+                            <option value="โต๊ะรับประทานอาหาร">โต๊ะรับประทานอาหาร</option>
+                            <option value="โต๊ะทำงาน">โต๊ะทำงาน</option>
+                            <option value="เตียง">เตียง</option>
+                            <option value="ตู้เสื้อผ้า">ตู้เสื้อผ้า</option>
+                            <option value="เก้าอี้">เก้าอี้</option>
                         </select>
                         <i class="fa-solid fa-caret-up arrow-icon"></i>
                     </div>
@@ -137,6 +136,7 @@
                 <i class="fa-solid fa-xmark"></i>
             </div>
             <h2 class="modal-title">แจ้งซ่อมไม่สำเร็จ</h2>
+            <p id="errorMessage"></p>
             <button class="close-btn" id="closeErrorBtn">ปิด</button>
         </div>
     </div>
