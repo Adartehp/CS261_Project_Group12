@@ -1,0 +1,196 @@
+{
+  "info": {
+    "name": "Demo 1 Backend",
+    "description": "Prepared from the current Demo 1 API contract. This is not an export of the Postman account or saved response history. Run create first to set ticketId. Requests create and accept records in the configured database.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "ticketId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "missingTicketId",
+      "value": "999999",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "01 Create repair request",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/repair-requests",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": \"6700000001\",\n  \"roomNumber\": \"A101\",\n  \"area\": \"bedroom\",\n  \"repairItem\": \"หลอดไฟ\",\n  \"description\": \"ไฟบริเวณโต๊ะอ่านหนังสือไม่ติด\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 201\", function () { pm.response.to.have.status(201); });",
+              "if (pm.response.code === 201) {",
+              "  const data = pm.response.json();",
+              "  pm.test(\"New ticket is pending\", function () { pm.expect(data.status).to.eql(\"PENDING\"); pm.expect(data.acceptedAt).to.eql(null); pm.expect(data.id).to.be.a(\"number\"); });",
+              "  pm.collectionVariables.set(\"ticketId\", String(data.id));",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Reject empty student ID",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/repair-requests",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"studentId\": \"\",\n  \"roomNumber\": \"A101\",\n  \"area\": \"bedroom\",\n  \"repairItem\": \"หลอดไฟ\",\n  \"description\": \"ไฟบริเวณโต๊ะอ่านหนังสือไม่ติด\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 400\", function () { pm.response.to.have.status(400); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Get all repair requests",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/repair-requests"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Get repair request detail",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/repair-requests/{{ticketId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Accept repair request",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": "{{baseUrl}}/api/repair-requests/{{ticketId}}/accept"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 200\", function () { pm.response.to.have.status(200); });",
+              "if (pm.response.code === 200) {",
+              "  const data = pm.response.json();",
+              "  pm.test(\"Ticket accepted\", function () { pm.expect(data.status).to.eql(\"IN_PROGRESS\"); pm.expect(data.acceptedAt).to.be.a(\"string\").and.not.empty; });",
+              "}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Reject repeated acceptance",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "url": "{{baseUrl}}/api/repair-requests/{{ticketId}}/accept"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 409\", function () { pm.response.to.have.status(409); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Get missing repair request",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/repair-requests/{{missingTicketId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"HTTP 404\", function () { pm.response.to.have.status(404); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
