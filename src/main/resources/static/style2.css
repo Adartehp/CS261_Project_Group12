@@ -1,3 +1,5 @@
+```css
+/* ===== Global ===== */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -6,55 +8,71 @@
 }
 
 body {
-    background-color: #ffffff;
-    color: #333;
+    background-color: #f4f6fb;
+    color: #334155;
     display: flex;
     flex-direction: column;
     min-height: 100vh;
 }
 
+/* ===== Navbar ===== */
 .navbar {
-    background-color: #dcdcdc;
+    background-color: #ffffff;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: 15px 24px;
     height: 70px;
+    flex-shrink: 0;
+    border-bottom: 1px solid #e5eaf2;
+    box-shadow: 0 2px 8px rgba(30, 50, 90, 0.04);
 }
 
 .menu-icon {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 32px;
-    height: 24px;
+    width: 28px;
+    height: 21px;
     cursor: pointer;
 }
 
 .menu-icon span {
     display: block;
-    height: 4px;
+    height: 3px;
     width: 100%;
-    background-color: #b0b0b0;
-    border-radius: 2px;
+    background-color: #64748b;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.menu-icon:hover span {
+    background-color: #4059a8;
 }
 
 .profile-icon {
     width: 42px;
     height: 42px;
-    background-color: #ffffff;
+    background-color: #eef2ff;
+    border: 1px solid #dbe3ff;
     border-radius: 50%;
     overflow: hidden;
     cursor: pointer;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: box-shadow 0.2s ease;
 }
 
+.profile-icon:hover {
+    box-shadow: 0 0 0 4px #e5eaff;
+}
+
+/* ===== Main Content ===== */
 .container {
     flex: 1;
-    padding: 20px;
-    max-width: 650px;
+    padding: 28px 20px;
+    max-width: 720px;
     width: 100%;
     margin: 0 auto;
     display: flex;
@@ -63,58 +81,78 @@ body {
 
 .page-title {
     font-size: 26px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #111;
+    font-weight: 700;
+    margin-bottom: 22px;
+    color: #263b75;
+    line-height: 1.4;
 }
 
+/* ===== Scroll Container ===== */
 .main-scroll-container {
-    background-color: #f4f4f4;
-    border-radius: 20px;
-    padding: 24px;
+    background-color: #ffffff;
+    border: 1px solid #e5eaf2;
+    border-radius: 16px;
+    padding: 20px;
     max-height: 450px;
-    overflow-y: auto; 
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.03);
+    overflow-y: auto;
+    box-shadow: 0 4px 16px rgba(30, 50, 90, 0.05);
 }
 
 .main-scroll-container::-webkit-scrollbar {
-    width: 8px;
-}
-.main-scroll-container::-webkit-scrollbar-track {
-    background: #eaeaea;
-    border-radius: 10px;
-}
-.main-scroll-container::-webkit-scrollbar-thumb {
-    background: #bcbcbc;
-    border-radius: 10px;
-}
-.main-scroll-container::-webkit-scrollbar-thumb:hover {
-    background: #999;
+    width: 7px;
 }
 
+.main-scroll-container::-webkit-scrollbar-track {
+    background: #f1f4f9;
+    border-radius: 10px;
+}
+
+.main-scroll-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.main-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* ===== Cards ===== */
 .card {
-    background-color: #e3e3e3; 
-    border-radius: 16px;
+    background-color: #f8faff;
+    border: 1px solid #e4eaf5;
+    border-radius: 12px;
     padding: 20px;
-    margin-bottom: 20px; 
+    margin-bottom: 16px;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+    box-shadow: 0 2px 5px rgba(30, 50, 90, 0.03);
 }
 
 .card:last-child {
-  margin-bottom: 0; 
+    margin-bottom: 0;
 }
 
 .card:hover {
+    background-color: #ffffff;
+    border-color: #b9c8f5;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    box-shadow: 0 6px 16px rgba(64, 89, 168, 0.09);
 }
 
+.card:active {
+    transform: scale(0.99);
+}
+
+/* ===== Information Rows ===== */
 .info-row {
     display: flex;
     align-items: center;
     margin-bottom: 14px;
+    gap: 12px;
 }
 
 .info-row:last-child {
@@ -123,61 +161,83 @@ body {
 
 .label {
     width: 130px;
+    flex-shrink: 0;
     font-size: 14px;
-    color: #333;
-    font-weight: 500;
+    color: #64748b;
+    font-weight: 600;
 }
 
 .skeleton-bar {
     flex: 1;
-    height: 18px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
+    min-width: 0;
+    min-height: 36px;
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
     display: flex;
     align-items: center;
-    padding-left: 10px;
-    font-size: 13px;
-    color: #555;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #334155;
 }
 
+/* ===== Footer ===== */
 .footer-bar {
-    background-color: #dcdcdc;
-    height: 70px;
+    background-color: #ffffff;
+    min-height: 70px;
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 0 20px;
+    padding: 0 24px;
+    border-top: 1px solid #e5eaf2;
+    box-shadow: 0 -2px 8px rgba(30, 50, 90, 0.03);
+    flex-shrink: 0;
 }
 
+/* ===== Back Button ===== */
 .back-btn {
-    background-color: #cccccc;
-    color: #333;
-    border: none;
-    padding: 8px 20px;
+    background-color: #ffffff;
+    color: #4059a8;
+    border: 1px solid #cbd5f5;
+    padding: 10px 22px;
+    min-height: 42px;
     font-size: 14px;
-    font-weight: 500;
-    border-radius: 8px;
+    font-weight: 600;
+    border-radius: 9px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease;
 }
 
 .back-btn:hover {
-    background-color: #bcbcbc;
+    background-color: #eef2ff;
+    border-color: #9aaceb;
 }
 
+.back-btn:active {
+    transform: scale(0.97);
+}
+
+/* ===== Modal Overlay ===== */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.4); 
+    background-color: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 16px;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
     z-index: 9999;
 }
 
@@ -186,78 +246,176 @@ body {
     visibility: visible;
 }
 
+/* ===== Modal Box ===== */
 .modal-box {
-    background-color: #e8e8e8;
-    width: 90%;
+    background-color: #ffffff;
+    border: 1px solid #e5eaf2;
+    width: 100%;
     max-width: 440px;
-    border-radius: 14px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    border-radius: 16px;
+    padding: 26px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
 }
 
+/* ===== Modal Form ===== */
 .modal-row {
     display: flex;
     align-items: center;
     margin-bottom: 16px;
+    gap: 12px;
 }
 
 .modal-column {
     display: flex;
     flex-direction: column;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
 }
 
 .modal-label {
     font-size: 14px;
-    color: #333;
+    color: #475569;
     margin-bottom: 8px;
+    font-weight: 600;
 }
 
 .modal-row .modal-label {
     margin-bottom: 0;
     width: 110px;
+    flex-shrink: 0;
 }
 
 .modal-input-sm {
     flex: 1;
-    height: 32px;
-    background-color: #dfdfdf;
+    min-width: 0;
+    min-height: 40px;
+    background-color: #f8fafc;
+    border: 1px solid #dbe2ed;
     border-radius: 8px;
     display: flex;
     align-items: center;
-    padding-left: 10px;
-    font-size: 13px;
-    color: #444;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: #334155;
 }
 
 .modal-input-lg {
     width: 100%;
-    height: 90px;
-    background-color: #dfdfdf;
-    border-radius: 10px;
-    padding: 10px;
-    font-size: 13px;
-    color: #444;
+    min-height: 100px;
+    background-color: #ffffff;
+    border: 1px solid #dbe2ed;
+    border-radius: 9px;
+    padding: 12px;
+    font-size: 14px;
+    color: #334155;
+    resize: vertical;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+.modal-input-lg:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.14);
+}
+
+/* ===== Submit Button ===== */
 .modal-btn-container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
 .submit-btn {
-    background-color: #ffcc00;
-    color: #222;
-    border: none;
-    padding: 10px 40px;
-    font-size: 15px;
-    font-weight: 500;
-    border-radius: 10px;
+    background-color: #4f65bd;
+    color: #ffffff;
+    border: 1px solid #4f65bd;
+    padding: 11px 28px;
+    min-height: 42px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 9px;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: background-color 0.2s;
+    box-shadow: 0 3px 7px rgba(79, 101, 189, 0.18);
+    transition:
+        background-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.15s ease;
 }
 
 .submit-btn:hover {
-    background-color: #e6b800;
+    background-color: #3d51a4;
+    box-shadow: 0 5px 12px rgba(79, 101, 189, 0.25);
 }
+
+.submit-btn:active {
+    background-color: #33458d;
+    transform: scale(0.97);
+}
+
+/* ===== Keyboard Accessibility ===== */
+button:focus-visible,
+[role="button"]:focus-visible {
+    outline: 3px solid #9aabef;
+    outline-offset: 3px;
+}
+
+/* ===== Mobile Responsive ===== */
+@media (max-width: 480px) {
+    .navbar {
+        padding: 12px 16px;
+    }
+
+    .container {
+        padding: 20px 14px;
+    }
+
+    .page-title {
+        font-size: 23px;
+        margin-bottom: 18px;
+    }
+
+    .main-scroll-container {
+        padding: 12px;
+        border-radius: 12px;
+        max-height: 60vh;
+    }
+
+    .card {
+        padding: 15px;
+        margin-bottom: 12px;
+    }
+
+    .label {
+        width: 95px;
+        font-size: 13px;
+    }
+
+    .info-row {
+        gap: 8px;
+    }
+
+    .skeleton-bar {
+        font-size: 13px;
+    }
+
+    .footer-bar {
+        padding: 0 16px;
+        min-height: 60px;
+    }
+
+    .modal-box {
+        padding: 20px;
+        border-radius: 14px;
+    }
+
+    .modal-row .modal-label {
+        width: 90px;
+        font-size: 13px;
+    }
+
+    .modal-input-lg {
+        min-height: 90px;
+    }
+}
+```

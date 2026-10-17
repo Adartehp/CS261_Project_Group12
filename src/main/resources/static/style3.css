@@ -1,274 +1,583 @@
+
+/* ========================================
+   GLOBAL
+======================================== */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Sarabun', sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+    font-family: 'Sarabun', sans-serif, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", Roboto;
+}
+
+html {
+    width: 100%;
+    min-height: 100%;
 }
 
 body {
-    background-color: #e0e0e0;
-    color: #333;
+    width: 100%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    background-color: #f1f4f9;
+    color: #334155;
+    overflow-x: hidden;
 }
 
+/* ========================================
+   NAVBAR
+======================================== */
 .navbar {
-    background-color: #e0e0e0;
+    width: 100%;
+    min-height: 70px;
+    padding: 14px 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 25px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5eaf2;
+    box-shadow: 0 2px 8px rgba(30, 50, 90, 0.04);
 }
 
 .menu-icon {
     font-size: 24px;
-    color: #888;
+    color: #64748b;
     cursor: pointer;
-    transition: color 0.2s;
+    transition: color 0.2s ease;
 }
 
 .menu-icon:hover {
-    color: #333;
+    color: #4059a8;
 }
 
 .profile-icon {
-    font-size: 24px;
-    color: #888;
-    background-color: #d0d0d0;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
+    width: 44px;
+    height: 44px;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 50%;
+    border: 1px solid #dce4ff;
+    background-color: #eef2ff;
+    color: #4f65bd;
+    font-size: 22px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
+.profile-icon:hover {
+    background-color: #dfe6ff;
+}
+
+/* ========================================
+   MAIN CONTAINER
+======================================== */
 .main-container {
-    background-color: #ffffff;
+    width: 100%;
+    max-width: 800px;
+    min-width: 0;
     flex: 1;
-    border-top-left-radius: 30px;
-    border-top-right-radius: 30px;
-    padding: 25px 20px;
+    margin: 0 auto;
+    padding: 28px 24px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    border-radius: 24px 24px 0 0;
+    box-shadow: 0 -3px 12px rgba(0, 0, 0, 0.03);
 }
 
 .page-title {
-    text-align: center;
+    margin-bottom: 26px;
+    color: #263b75;
     font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 25px;
-    color: #111;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
+    overflow-wrap: anywhere;
 }
 
+/* ========================================
+   FORM CARD
+======================================== */
 .form-card {
-    background-color: #f7f7f7;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 24px 20px;
+    margin-bottom: 20px;
+    background-color: #f8faff;
+    border: 1px solid #e5eaf4;
     border-radius: 16px;
-    padding: 20px 16px 25px 16px;
+}
+
+/* ========================================
+   FORM FIELDS
+======================================== */
+.input-group {
+    width: 100%;
+    min-width: 0;
+    position: relative;
     margin-bottom: 20px;
 }
 
-.input-group {
-    margin-bottom: 18px;
-    position: relative;
+.input-group:last-child {
+    margin-bottom: 0;
 }
 
 .input-group label {
     display: block;
-    font-size: 15px;
-    font-weight: 500;
-    color: #222;
     margin-bottom: 8px;
+    color: #334155;
+    font-size: 15px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
 }
 
 .optional {
-    color: #888;
+    color: #94a3b8;
     font-size: 13px;
+    font-weight: 400;
 }
 
-.input-group input, 
-.input-group select, 
+/* Inputs, Selects, Textareas */
+.input-group input,
+.input-group select,
 .input-group textarea {
+    display: block;
     width: 100%;
-    background-color: #dcdcdc;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 15px;
-    font-size: 14px;
-    color: #333;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 11px 14px;
+    border: 1px solid #cfd8e6;
+    border-radius: 9px;
     outline: none;
+    background-color: #ffffff;
+    color: #334155;
+    font-size: 15px;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .input-group input::placeholder,
 .input-group textarea::placeholder {
-    color: #666;
+    color: #94a3b8;
 }
 
+/* Focus */
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+    border-color: #6279d4;
+    box-shadow: 0 0 0 3px rgba(98, 121, 212, 0.13);
+}
+
+/* Validation */
+.input-group input:invalid:focus,
+.input-group select:invalid:focus,
+.input-group textarea:invalid:focus {
+    border-color: #dc2626;
+}
+
+/* Dropdown */
 .select-wrapper {
     position: relative;
+    width: 100%;
+    min-width: 0;
 }
 
 .select-wrapper select {
     appearance: none;
     -webkit-appearance: none;
-    -moz-appearance: none;
     cursor: pointer;
-    color: #666;
+    padding-right: 40px;
+}
+
+.select-wrapper select:required:invalid {
+    color: #94a3b8;
 }
 
 .select-wrapper select:valid {
-    color: #333;
+    color: #334155;
 }
 
 .arrow-icon {
     position: absolute;
-    right: 15px;
     top: 50%;
+    right: 15px;
     transform: translateY(-50%);
-    color: #666;
-    pointer-events: none;
+    color: #64748b;
     font-size: 14px;
+    pointer-events: none;
 }
 
+/* Textarea */
 .input-group textarea {
-    resize: none;
-    height: 100px;
+    min-height: 120px;
+    line-height: 1.6;
+    resize: vertical;
+    overflow-wrap: anywhere;
 }
 
+/* Character Count */
 .char-count {
-    text-align: right;
+    margin-top: 6px;
+    color: #94a3b8;
     font-size: 12px;
-    color: #666;
-    margin-top: 4px;
+    text-align: right;
 }
 
+/* ========================================
+   SUBMIT BUTTON
+======================================== */
 .submit-button-container {
+    width: 100%;
     display: flex;
     justify-content: center;
-    margin-top: 25px;
+    margin-top: 26px;
 }
 
 #submitBtn {
-    background-color: #b5b5b5;
-    color: #111;
-    border: none;
-    border-radius: 20px;
-    padding: 10px 35px;
+    min-width: 140px;
+    min-height: 46px;
+    padding: 11px 32px;
+    border: 1px solid #4f65bd;
+    border-radius: 10px;
+    background-color: #4f65bd;
+    color: #ffffff;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
+    box-shadow: 0 3px 8px rgba(79, 101, 189, 0.18);
+    transition:
+        background-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.15s ease;
 }
 
 #submitBtn:hover {
-    background-color: #999;
+    background-color: #3d51a4;
+    box-shadow: 0 5px 12px rgba(79, 101, 189, 0.25);
 }
 
 #submitBtn:active {
-    transform: scale(0.98);
+    background-color: #33458d;
+    transform: scale(0.97);
 }
 
+#submitBtn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* ========================================
+   BOTTOM BAR
+======================================== */
 .bottom-bar {
-    margin-top: auto;
+    width: 100%;
     display: flex;
     justify-content: flex-start;
+    margin-top: auto;
+    padding-top: 20px;
     padding-bottom: 10px;
 }
 
 .back-btn {
-    background-color: #b5b5b5;
-    color: #111;
-    border: none;
-    border-radius: 20px;
-    padding: 10px 28px;
-    font-size: 15px;
-    font-weight: 500;
+    min-height: 42px;
+    padding: 10px 24px;
+    border: 1px solid #cbd5f5;
+    border-radius: 9px;
+    background-color: #ffffff;
+    color: #4059a8;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease;
 }
 
 .back-btn:hover {
-    background-color: #999;
+    background-color: #eef2ff;
+    border-color: #a5b4fc;
 }
 
+.back-btn:active {
+    transform: scale(0.97);
+}
 
+/* ========================================
+   MODAL OVERLAY
+======================================== */
 .modal-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.4);
+    inset: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    padding: 16px;
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    background-color: rgba(15, 23, 42, 0.48);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    overflow-y: auto;
 }
 
 .modal-overlay.active {
     display: flex;
 }
 
+/* ========================================
+   MODAL CARD - BASE
+======================================== */
 .modal-card {
-    background-color: #ffffff;
-    width: 85%;
-    max-width: 320px;
-    border-radius: 16px;
-    padding: 30px 20px;
+    width: 100%;
+    max-width: 360px;
+    min-width: 0;
+    padding: 30px 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    background-color: #ffffff;
+    border: 1px solid #e5eaf2;
+    border-radius: 18px;
+    box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
     animation: popupAnimation 0.25s ease-out;
+    overflow-wrap: anywhere;
 }
 
+/* Popup Animation */
 @keyframes popupAnimation {
     from {
-        transform: scale(0.8);
+        transform: scale(0.92) translateY(8px);
         opacity: 0;
     }
+
     to {
-        transform: scale(1);
+        transform: scale(1) translateY(0);
         opacity: 1;
     }
 }
 
+/* ========================================
+   MODAL ICON
+======================================== */
 .icon-circle {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-color: #e0e0e0;
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
+    border: 1px solid #dce4ff;
+    border-radius: 50%;
+    background-color: #eef2ff;
+    color: #4f65bd;
 }
 
 .icon-circle i {
-    font-size: 50px;
-    color: #666666;
+    font-size: 42px;
 }
 
+/* ========================================
+   MODAL TITLE
+======================================== */
 .modal-title {
+    margin-bottom: 12px;
+    color: #263b75;
     font-size: 20px;
-    font-weight: bold;
-    color: #111;
-    margin-bottom: 20px;
+    font-weight: 700;
+    line-height: 1.5;
+    text-align: center;
 }
 
-.close-btn {
-    background-color: #dcdcdc;
-    color: #333;
-    border: none;
-    border-radius: 12px;
-    padding: 8px 24px;
+.modal-message {
+    margin-bottom: 22px;
+    color: #64748b;
     font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
 }
 
-.close-btn:hover {
-    background-color: #c0c0c0;
+/* ========================================
+   SUCCESS MODAL - GREEN
+   Add class="success" to .modal-card
+======================================== */
+.modal-card.success {
+    border: 1px solid #bbf7d0;
+}
+
+.modal-card.success .icon-circle {
+    background-color: #dcfce7;
+    border-color: #bbf7d0;
+    color: #16a34a;
+}
+
+.modal-card.success .modal-title {
+    color: #15803d;
+}
+
+.modal-card.success .close-btn {
+    background-color: #16a34a;
+    border-color: #16a34a;
+}
+
+.modal-card.success .close-btn:hover {
+    background-color: #15803d;
+}
+
+/* ========================================
+   ERROR MODAL - RED
+   Add class="error" to .modal-card
+======================================== */
+.modal-card.error {
+    border: 1px solid #fecaca;
+}
+
+.modal-card.error .icon-circle {
+    background-color: #fee2e2;
+    border-color: #fecaca;
+    color: #dc2626;
+}
+
+.modal-card.error .modal-title {
+    color: #b91c1c;
+}
+
+.modal-card.error .close-btn {
+    background-color: #dc2626;
+    border-color: #dc2626;
+}
+
+.modal-card.error .close-btn:hover {
+    background-color: #b91c1c;
+}
+
+/* ========================================
+   MODAL CLOSE BUTTON
+======================================== */
+.close-btn {
+    min-height: 42px;
+    min-width: 110px;
+    max-width: 100%;
+    padding: 10px 28px;
+    border: 1px solid #4f65bd;
+    border-radius: 9px;
+    background-color: #4f65bd;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        transform 0.15s ease;
+}
+
+.close-btn:active {
+    transform: scale(0.97);
+}
+
+/* ========================================
+   KEYBOARD ACCESSIBILITY
+======================================== */
+#submitBtn:focus-visible,
+.back-btn:focus-visible,
+.close-btn:focus-visible,
+.menu-icon:focus-visible,
+.profile-icon:focus-visible {
+    outline: 3px solid #a5b4fc;
+    outline-offset: 3px;
+}
+
+/* ========================================
+   MOBILE RESPONSIVE
+======================================== */
+@media (max-width: 480px) {
+    .navbar {
+        min-height: 62px;
+        padding: 12px 18px;
+    }
+
+    .main-container {
+        padding: 22px 16px;
+        border-radius: 20px 20px 0 0;
+    }
+
+    .page-title {
+        margin-bottom: 20px;
+        font-size: 22px;
+    }
+
+    .form-card {
+        padding: 20px 15px;
+        border-radius: 13px;
+    }
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+        font-size: 16px;
+    }
+
+    #submitBtn {
+        width: 100%;
+        min-height: 48px;
+    }
+
+    .modal-overlay {
+        padding: 16px;
+    }
+
+    .modal-card {
+        width: 100%;
+        max-width: 340px;
+        padding: 26px 20px;
+    }
+
+    .icon-circle {
+        width: 76px;
+        height: 76px;
+    }
+
+    .icon-circle i {
+        font-size: 36px;
+    }
+}
+
+/* ========================================
+   SMALL SCREEN SAFETY
+======================================== */
+@media (max-width: 320px) {
+    .main-container {
+        padding: 18px 12px;
+    }
+
+    .form-card {
+        padding: 16px 12px;
+    }
+
+    .modal-card {
+        padding: 22px 16px;
+    }
+}
+
+/* ========================================
+   REDUCED MOTION
+======================================== */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
 }
