@@ -1,5 +1,19 @@
-FROM tomcat:10.1-jdk21-temurin
-RUN rm -rf /usr/local/tomcat/webapps/ROOT
-COPY target/*.war /usr/local/tomcat/webapps/ROOT.war
+FROM eclipse-temurin:21-jdk AS build
+
+WORKDIR /app
+
+COPY .mvn/ .mvn/
+COPY mvnw pom.xml ./
+COPY src/ src/
+
+RUN sh ./mvnw -B -DskipTests package
+
+FROM eclipse-temurin:21-jre
+
+WORKDIR /app
+
+COPY --from=build /app/target/*.war app.war
+
 EXPOSE 8080
-CMD ["catalina.sh", "run"]
+
+ENTRYPOINT ["java", "-jar", "app.war"]
