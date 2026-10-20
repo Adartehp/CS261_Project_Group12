@@ -4,6 +4,34 @@
 
 Dockerfile build WAR ด้วย Maven แล้วรัน `java -jar` โดยใช้ Tomcat ที่มากับ Spring Boot ต่างจากตัวอย่างบทเรียนที่คัดลอก WAR เข้า Tomcat container แยก ไม่ต้องติดตั้ง Java หรือ Maven บนเครื่องสำหรับวิธีนี้
 
+## macOS (Terminal)
+
+1. ติดตั้ง Docker Desktop สำหรับ Mac โดยเลือกให้ตรงกับชิปของเครื่อง (Apple silicon หรือ Intel) ตรวจชนิดชิปได้ที่เมนู Apple → About This Mac
+2. เปิด **Docker Desktop** และรอให้พร้อมใช้งาน
+3. เปิด **Terminal** แล้วเข้าโฟลเดอร์หลักของโปรเจกต์ หากมี repo อยู่แล้ว ให้ใช้ตำแหน่งจริงของเครื่อง เช่น:
+
+```bash
+cd ~/Learning/cs261/project/CS261_Project_Group12
+```
+
+หากยังไม่มี repo ให้เข้าโฟลเดอร์ที่ต้องการเก็บโปรเจกต์ แล้ว clone:
+
+```bash
+git clone https://github.com/Adartehp/CS261_Project_Group12.git
+cd CS261_Project_Group12
+```
+
+4. ตรวจว่า Docker พร้อมใช้งาน:
+
+```bash
+docker version
+docker info --format '{{.OSType}}'
+```
+
+ควรเห็นทั้ง Client และ Server และคำสั่งสุดท้ายแสดง `linux` จากนั้นทำขั้นตอน **1–4 ด้านล่าง** ได้เลย โดยคัดลอกคำสั่งแต่ละบรรทัดไปวางใน Terminal
+
+เมื่อเปิดแอปสำเร็จ ให้เข้า http://localhost:18080/index.html ด้วย Browser บน Mac หากเคยสร้าง container แล้ว ให้ใช้หัวข้อ **หยุดและเปิดใหม่** แทนการสร้างซ้ำ ส่วนวิธี Compose มีคำสั่งสำหรับ macOS อยู่ในหัวข้อ **ทางเลือก: Docker Compose**
+
 ## Windows (PowerShell)
 
 1. ติดตั้ง Git for Windows และ [Docker Desktop for Windows](https://docs.docker.com/desktop/setup/install/windows-install/) โดยเตรียม WSL 2 ตามคู่มือติดตั้ง
