@@ -4,34 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>เข้าสู่ระบบ</title>
-    <!-- เชื่อมต่อไฟล์ CSS -->
     <link rel="stylesheet" href="css/studentlogin.css">
 </head>
 <body>
 
-    <!-- แถบสีส้มด้านบน -->
     <header class="top-bar"></header>
 
-    <!-- คอนเทนเนอร์หลัก -->
     <main class="main-container">
-        <!-- การ์ดเข้าสู่ระบบสีฟ้าอ่อน -->
         <div class="login-card">
             <h1 class="card-title">เข้าสู่ระบบ</h1>
 
             <form id="loginForm">
-                <!-- ชื่อผู้ใช้ * -->
                 <div class="input-group">
                     <label for="username">ชื่อผู้ใช้ *</label>
                     <input type="text" id="username" placeholder="ชื่อผู้ใช้หรือเบอร์โทรศัพท์" required>
                 </div>
 
-                <!-- รหัสผ่าน * -->
                 <div class="input-group">
                     <label for="password">รหัสผ่าน *</label>
                     <input type="password" id="password" placeholder="รหัสผ่าน" required>
                 </div>
 
-                <!-- จำฉันไว้ & ลืมรหัสผ่าน -->
                 <div class="form-options">
                     <label class="remember-me">
                         <input type="checkbox" id="rememberMe">
@@ -41,11 +34,9 @@
                     <a href="#" class="forgot-password">ลืมรหัสผ่าน ?</a>
                 </div>
 
-                <!-- ปุ่ม Log in -->
                 <button type="submit" class="btn btn-login">Log in</button>
             </form>
 
-            <!-- ยังไม่ได้เป็นสมาชิก ? & ปุ่มลงทะเบียน -->
             <div class="register-section">
                 <p class="register-text">ยังไม่ได้เป็นสมาชิก ?</p>
                 <button type="button" id="registerBtn" class="btn btn-register">ลงทะเบียนสมาชิกใหม่</button>
@@ -53,7 +44,6 @@
 
             <hr class="divider">
 
-            <!-- ตัวเลือกเปลี่ยนภาษา -->
             <div class="language-switch">
                 <span class="lang-option active" id="langTH">TH</span>
                 <span class="lang-option" id="langEN">EN</span>
@@ -61,7 +51,6 @@
         </div>
     </main>
 
-    <!-- เชื่อมต่อไฟล์ JavaScript -->
     <script src="js/studentlogin.js"></script>
 </body>
 </html>
