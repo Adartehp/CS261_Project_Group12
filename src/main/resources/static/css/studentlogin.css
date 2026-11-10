@@ -1,0 +1,209 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Sarabun', sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+}
+
+body {
+    background-color: #eaf5ff; /* สีพื้นหลังฟ้าอ่อนเบาๆ */
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* แถบสีส้มด้านบน */
+.top-bar {
+    background-color: #e65c19;
+    height: 60px;
+    width: 100%;
+}
+
+/* ส่วนจัดวางการ์ดให้อยู่ตรงกลาง */
+.main-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* การ์ดเข้าสู่ระบบสีฟ้าอ่อน */
+.login-card {
+    background-color: #cee7fe;
+    width: 100%;
+    max-width: 360px;
+    border-radius: 20px;
+    padding: 30px 24px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #111;
+    margin-bottom: 24px;
+}
+
+/* ช่องกรอกข้อมูล */
+.input-group {
+    margin-bottom: 16px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.input-group input {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 12px;
+    background-color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    color: #333;
+}
+
+.input-group input::placeholder {
+    color: #999;
+}
+
+/* ตัวเลือก จำฉันไว้ & ลืมรหัสผ่าน */
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-bottom: 20px;
+    color: #444;
+}
+
+.remember-me {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.remember-me input {
+    display: none;
+}
+
+.custom-checkbox {
+    width: 16px;
+    height: 16px;
+    background-color: #ffffff;
+    border-radius: 4px;
+    margin-right: 8px;
+    display: inline-block;
+    position: relative;
+}
+
+.remember-me input:checked + .custom-checkbox {
+    background-color: #e65c19;
+}
+
+.remember-me input:checked + .custom-checkbox::after {
+    content: '';
+    position: absolute;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.forgot-password {
+    color: #333;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* ปุ่มกดร่วม */
+.btn {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+/* ปุ่ม Log in สีส้ม */
+.btn-login {
+    background-color: #e65c19;
+    color: #ffffff;
+}
+
+.btn-login:hover {
+    background-color: #d04f10;
+}
+
+/* ส่วนลงทะเบียน */
+.register-section {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.register-text {
+    font-size: 13px;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+/* ปุ่มลงทะเบียนสมาชิกใหม่ สีส้มอ่อน */
+.btn-register {
+    background-color: #f6a176;
+    color: #ffffff;
+}
+
+.btn-register:hover {
+    background-color: #e88d60;
+}
+
+/* เส้นแบ่ง */
+.divider {
+    border: none;
+    border-top: 1px solid #a8c6e5;
+    margin: 24px 0 16px 0;
+}
+
+/* ตัวเลือกภาษา TH / EN */
+.language-switch {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+.lang-option {
+    cursor: pointer;
+    padding: 2px 4px;
+}
+
+.lang-option.active {
+    color: #111;
+}
+
+.lang-option:hover {
+    color: #e65c19;
+}
