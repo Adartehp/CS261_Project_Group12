@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = document.getElementById('password').value;
 
             if (username && password) {
-                // เปลี่ยนหน้าไปยัง select.html เมื่อเข้าสู่ระบบสำเร็จ
                 window.location.href = 'studentselect.html';
             }
         });
