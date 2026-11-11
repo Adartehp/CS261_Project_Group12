@@ -12,7 +12,7 @@ html, body {
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f6fb;
+    background-color: #f0f7ff; /* ปรับสีพื้นหลังให้ออกฟ้าพาสเทลอ่อนๆ ตามแบบ */
     display: flex;
     flex-direction: column;
     min-height: 100vh;
@@ -20,15 +20,13 @@ body {
 
 /* Navbar */
 .navbar {
-    background-color: #ffffff;
-    height: 60px;
-    min-height: 60px;
+    background-color: #e65c19; /* ปรับแถบด้านบนเป็นสีส้มตามแบบ */
+    height: 56px;
+    min-height: 56px;
     display: flex;
     align-items: center;
     padding: 0 24px;
     width: 100%;
-    border-bottom: 1px solid #e8ebf2;
-    box-shadow: 0 2px 8px rgba(30, 50, 90, 0.04);
 }
 
 /* Menu icon */
@@ -46,13 +44,13 @@ body {
     display: block;
     height: 3px;
     width: 100%;
-    background-color: #64748b;
+    background-color: #ffffff; /* เปลี่ยนขีดเมนูเป็นสีขาวตัดกับพื้นส้ม */
     border-radius: 4px;
     transition: background-color 0.2s ease;
 }
 
 .menu-icon:hover span {
-    background-color: #4059a8;
+    background-color: #ffe0b2;
 }
 
 /* Main container */
@@ -69,27 +67,27 @@ body {
 .button-group {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 20px; /* ปรับระยะห่างระหว่างปุ่มให้พอดีกับภาพ */
     width: 100%;
-    max-width: 400px;
+    max-width: 320px; /* ปรับความกว้างกล่องปุ่มให้แคบลงสวยงามตามแบบ */
 }
 
 /* Buttons */
 .role-btn {
-    background-color: #ffffff;
-    border: 1px solid #dfe5ef;
-    border-radius: 12px;
-    padding: 20px 16px;
-    min-height: 68px;
-    font-size: 20px;
-    font-weight: 600;
-    color: #334155;
+    background-color: #ffccbc; /* เปลี่ยนสีพื้นหลังปุ่มเป็นสีส้มพีชพาสเทลตามภาพ */
+    border: 1px solid #ffab91;  /* ปรับสีขอบปุ่มให้กลมกลืน */
+    border-radius: 8px;        /* ปรับความโค้งมุมปุ่มให้น้อยลงแบบในภาพ */
+    padding: 18px 16px;
+    min-height: 60px;
+    font-size: 22px;           /* ปรับขนาดตัวอักษรให้เด่นชัด */
+    font-weight: 500;
+    color: #2b303a;            /* สีตัวอักษรเข้ม อ่านง่าย */
     text-align: center;
     text-decoration: none;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 5px rgba(30, 50, 90, 0.04);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     cursor: pointer;
     transition:
         background-color 0.2s ease,
@@ -98,36 +96,28 @@ body {
         transform 0.15s ease;
 }
 
-/* Hover: clearly looks interactive */
+/* Hover */
 .role-btn:hover {
-    background-color: #f0f4ff;
-    border-color: #8095e0;
-    color: #4059a8;
-    box-shadow: 0 4px 12px rgba(64, 89, 168, 0.12);
+    background-color: #ffab91;
+    border-color: #ff8a65;
+    color: #1e293b;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 /* Keyboard focus */
 .role-btn:focus-visible {
-    outline: 3px solid #9aabef;
+    outline: 3px solid #ffab91;
     outline-offset: 3px;
 }
 
 /* Click feedback */
 .role-btn:active {
-    background-color: #e5ebff;
-    border-color: #667eea;
-    transform: scale(0.98);
-    box-shadow: 0 1px 3px rgba(64, 89, 168, 0.1);
+    background-color: #ff9e80;
+    border-color: #ff7043;
+    transform: scale(0.97);
 }
 
-/* Footer */
-.footer-bar {
-    background-color: #ffffff;
-    height: 50px;
-    min-height: 50px;
-    width: 100%;
-    border-top: 1px solid #e8ebf2;
-}
+
 
 /* Mobile */
 @media (max-width: 480px) {
@@ -140,13 +130,13 @@ body {
     }
 
     .button-group {
-        gap: 14px;
+        gap: 16px;
     }
 
     .role-btn {
-        min-height: 64px;
-        padding: 18px 14px;
-        font-size: 18px;
-        border-radius: 10px;
+        min-height: 56px;
+        padding: 16px 14px;
+        font-size: 20px;
+        border-radius: 8px;
     }
 }
