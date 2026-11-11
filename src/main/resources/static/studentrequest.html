@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แจ้งซ่อม</title>
+ 
+   <link rel="stylesheet" href="css/studentrequest.css">   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="navbar"></header>
+   
+    <main class="main-container">
+        <h1 class="page-title">แจ้งซ่อม</h1>
+
+        
+        <div class="form-card">
+            <form id="repairForm">                
+               
+                <div class="input-group">
+                    <label for="studentId">รหัสนักศึกษา</label>
+                    <input type="text" id="studentId" maxlength="10" placeholder="รหัสนักศึกษา">
+                </div>
+
+               
+                <div class="input-group">
+                    <label for="room">ห้อง *</label>
+                    <input type="text" id="room" placeholder="รหัสห้องพัก">
+                </div>
+
+                
+                <div class="input-group">
+                    <label for="area">พื้นที่ *</label>
+                    <div class="select-wrapper">
+                        <select id="area">
+                            <option value="" disabled selected>เลือกพื้นที่ห้อง</option>
+                             <option value="bedroom">ห้องนอน</option>
+                            <option value="restroom">ห้องนั่งเล่น (เฉพาะโซน B)</option>
+                            <option value="centerpoint">พื้นที่ส่วนกลาง</option>
+                            <option value="bathroom">ห้องน้ำ</option>
+                            <option value="balcony">ระเบียง+ลานซักผ้า</option>
+                            <option value="key">รายการกุญแจ</option>
+                            <option value="air">เครื่องปรับอากาศ (แอร์)</option>
+                        </select>
+                        <i class="fa-solid fa-caret-up arrow-icon"></i>
+                    </div>
+                </div>
+
+               
+                <div class="input-group">
+                    <label for="repairItem">รายการซ่อม *</label>
+                    <div class="select-wrapper">
+                        <select id="repairItem">
+                            <option value="" disabled selected>เลือกสิ่งที่ต้องการซ่อม</option>
+                            <option value="โต๊ะเครื่องแป้ง">โต๊ะเครื่องแป้ง</option>
+                            <option value="ชั้นวางของ">ชั้นวางของ</option>
+                            <option value="บานเกล็ด">บานเกล็ด</option>
+                            <option value="สัญญาณโทรทัศน์">สัญญาณโทรทัศน์</option>
+                            <option value="พัดลมดูดอากาศ">พัดลมดูดอากาศ</option>
+                            <option value="อื่นๆ">อื่นๆ</option>
+                            <option value="อินเทอร์เน็ต">อินเทอร์เน็ต</option>
+                            <option value="กระจกเงา">กระจกเงา</option>
+                            <option value="ลูกบิดประตู">ลูกบิดประตู</option>
+                            <option value="ผ้าม่าน">ผ้าม่าน</option>
+                            <option value="ประตูมุ้งลวด">ประตูมุ้งลวด</option>
+                            <option value="ประตูกระจกบานเลื่อน">ประตูกระจกบานเลื่อน</option>
+                            <option value="ฟูกที่นอน">ฟูกที่นอน</option>
+                            <option value="ประตู">ประตู</option>
+                            <option value="หลอดไฟ">หลอดไฟ</option>
+                            <option value="สวิทซ์ไฟ">สวิทซ์ไฟ</option>
+                            <option value="รีโมทโทรทัศน์">รีโมทโทรทัศน์</option>
+                            <option value="รีโมทเครื่องปรับอากาศ">รีโมทเครื่องปรับอากาศ</option>
+                            <option value="พัดลมเพดาน">พัดลมเพดาน</option>
+                            <option value="ตู้เย็น">ตู้เย็น</option>
+                            <option value="ปลั๊กไฟ">ปลั๊กไฟ</option>
+                            <option value="โทรทัศน์">โทรทัศน์</option>
+                            <option value="เครื่องปรับอากาศ">เครื่องปรับอากาศ</option>
+                            <option value="โต๊ะหัวเตียง">โต๊ะหัวเตียง</option>
+                            <option value="โต๊ะรับประทานอาหาร">โต๊ะรับประทานอาหาร</option>
+                            <option value="โต๊ะทำงาน">โต๊ะทำงาน</option>
+                            <option value="เตียง">เตียง</option>
+                            <option value="ตู้เสื้อผ้า">ตู้เสื้อผ้า</option>
+                            <option value="เก้าอี้">เก้าอี้</option>
+                        </select>
+                        <i class="fa-solid fa-caret-up arrow-icon"></i>
+                    </div>
+                </div>
+
+              
+                <div class="input-group">
+                    <label for="details">รายละเอียดการซ่อม <span class="optional">( ไม่จำเป็น )</span></label>
+                    <textarea id="details" maxlength="150" placeholder="กรุณากรอกข้อมูลเพิ่มเติม"></textarea>
+                    <div class="char-count"><span id="currentCount">0</span>/150</div>
+                </div>
+
+              
+                <div class="submit-button-container">
+                    <button type="button" id="submitBtn">แจ้งซ่อม</button>
+                </div>
+
+            </form>
+        </div>
+
+       
+        <div class="bottom-bar">
+            <button type="button" id="backBtn" class="back-btn">ย้อนกลับ</button>
+        </div>
+    </main>
+
+   
+    <div class="modal-overlay" id="modalOverlay">
+       
+        <div class="modal-card" id="successModal" style="display: none;">
+            <div class="icon-circle success-circle">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h2 class="modal-title">แจ้งซ่อมสำเร็จ</h2>
+            <button class="close-btn" id="closeSuccessBtn">ตกลง</button>
+        </div>
+
+       
+        <div class="modal-card" id="errorModal" style="display: none;">
+            <div class="icon-circle error-circle">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
+            <h2 class="modal-title">แจ้งซ่อมไม่สำเร็จ</h2>
+            <p id="errorMessage"></p>
+            <button class="close-btn" id="closeErrorBtn">ปิด</button>
+        </div>
+    </div>
+
+   <script src="js/studentrequest.js"></script>
+   
+</body>
+</html>

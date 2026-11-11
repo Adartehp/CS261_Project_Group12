@@ -1,0 +1,367 @@
+/* ========================================
+   GLOBAL & THEME COLORS (ฟ้าอ่อน + แถบส้ม)
+======================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Sarabun', sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+}
+
+html, body {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #eaf5ff; /* พื้นหลังสีฟ้าอ่อน */
+    color: #334155;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* ========================================
+   NAVBAR (แถบสีส้มด้านบน)
+======================================== */
+.navbar {
+    width: 100%;
+    height: 65px;
+    padding: 0 24px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: #e65c19; /* แถบสีส้มตามแบบ Login */
+}
+
+.profile-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background-color: #ffffff;
+    color: #007bff;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+/* ========================================
+   MAIN CONTAINER
+======================================== */
+.main-container {
+    width: 100%;
+    max-width: 600px;
+    flex: 1;
+    margin: 0 auto;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-title {
+    margin-bottom: 20px;
+    color: #2b70c9; /* หัวข้อสีฟ้าเข้ม */
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* ========================================
+   FORM CARD (กล่องสีฟ้าพาสเทล)
+======================================== */
+.form-card {
+    width: 100%;
+    padding: 24px 20px;
+    margin-bottom: 20px;
+    background-color: #cee7fe; /* สีฟ้าพาสเทลตามแบบฟอร์ม Login */
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+}
+
+/* ========================================
+   FORM FIELDS
+======================================== */
+.input-group {
+    width: 100%;
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    color: #1a2b4c;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.optional {
+    color: #667085;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+    display: block;
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 12px;
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 14px;
+    outline: none;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+    color: #999999;
+}
+
+/* Dropdown */
+.select-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.select-wrapper select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    padding-right: 35px;
+    color: #999999;
+}
+
+.select-wrapper select:valid {
+    color: #333333;
+}
+
+.arrow-icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #666666;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+/* Textarea */
+.input-group textarea {
+    height: 95px;
+    padding: 12px 14px;
+    resize: none;
+}
+
+/* Character Count */
+.char-count {
+    margin-top: 4px;
+    color: #444444;
+    font-size: 11px;
+    text-align: right;
+}
+
+/* ========================================
+   SUBMIT BUTTON (ปุ่มแจ้งซ่อมสีส้มในกล่อง)
+======================================== */
+.submit-button-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#submitBtn {
+    width: 140px;
+    height: 40px;
+    border: none;
+    border-radius: 20px;
+    background-color: #e65c19; /* สีส้ม */
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(230, 92, 25, 0.3);
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+#submitBtn:hover {
+    background-color: #cf4e10;
+}
+
+#submitBtn:active {
+    transform: scale(0.97);
+}
+
+/* ========================================
+   BOTTOM BAR (ปุ่มย้อนกลับสีส้มมุมซ้ายล่าง)
+======================================== */
+.bottom-bar {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: auto;
+    padding-bottom: 20px;
+}
+
+.back-btn {
+    width: 110px;
+    height: 40px;
+    border: none;
+    border-radius: 20px;
+    background-color: #e65c19; /* สีส้ม */
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 3px 8px rgba(230, 92, 25, 0.3);
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.back-btn:hover {
+    background-color: #cf4e10;
+}
+
+.back-btn:active {
+    transform: scale(0.97);
+}
+
+/* ========================================
+   MODAL OVERLAY (ป๊อปอัพแจ้งเตือน)
+======================================== */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-card {
+    width: 85%;
+    max-width: 300px;
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    animation: popupAnimation 0.2s ease-out;
+}
+
+@keyframes popupAnimation {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* วงกลมไอคอนป๊อปอัพ */
+.icon-circle {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+}
+
+.icon-circle i {
+    font-size: 45px;
+}
+
+.modal-title {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+/* สไตล์สำเร็จ (เขียวพาสเทล) */
+.modal-card.success .icon-circle {
+    background-color: #cafbe1;
+    color: #138a41;
+    border: 1px solid #82e2b3;
+}
+.modal-card.success .modal-title {
+    color: #111111;
+}
+
+/* สไตล์ไม่สำเร็จ (แดงพาสเทล) */
+.modal-card.error .icon-circle {
+    background-color: #ffccd0;
+    color: #d32f2f;
+    border: 1px solid #f8949b;
+}
+.modal-card.error .modal-title {
+    color: #111111;
+}
+
+/* ปุ่มปิดป๊อปอัพ */
+.close-btn {
+    width: 100px;
+    height: 38px;
+    border: none;
+    border-radius: 12px;
+    background-color: #dcdcdc;
+    color: #333333;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.close-btn:hover {
+    background-color: #c0c0c0;/* ========================================
+   แก้ไขกล่องไอคอนใน Pop-up (ทั้ง Success และ Error)
+======================================== */
+.modal-card .icon-circle {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto 16px auto; /* จัดให้อยู่กึ่งกลางแนวนอน */
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    border-radius: 50%;
+    position: relative;
+}
+
+.modal-card .icon-circle i {
+    font-size: 40px !important;
+    line-height: 1 !important;
+}
+
+/* สีของวงกลมและไอคอน (กรณีสำเร็จ - สีเขียวพาสเทล) */
+.modal-card.success .icon-circle {
+    background-color: #cafbe1 !important;
+    color: #138a41 !important;
+    border: 1px solid #82e2b3 !important;
+}
+
+/* สีของวงกลมและไอคอน (กรณีไม่สำเร็จ - สีแดงพาสเทล) */
+.modal-card.error .icon-circle {
+    background-color: #ffccd0 !important;
+    color: #d32f2f !important;
+    border: 1px solid #f8949b !important;
+}
+}
+
+
