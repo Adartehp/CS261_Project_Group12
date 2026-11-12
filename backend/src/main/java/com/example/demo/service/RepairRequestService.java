@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -45,18 +46,6 @@ public class RepairRequestService {
                 "id"
             )
         );
-    }
-
-    @Transactional(readOnly = true)
-    public RepairRequest getById(Long id) {
-
-        return repository.findById(id)
-            .orElseThrow(() ->
-                new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "ไม่พบรายการแจ้งซ่อม"
-                )
-            );
     }
 
     @Transactional
@@ -134,6 +123,74 @@ public class RepairRequestService {
 
         return getById(id);
     }
+
+    @Transactional(readOnly = true)
+    public List<RepairRequest> getMine(
+        String studentId,
+        String status,
+        LocalDate from,
+        LocalDate to) {
+
+    if (studentId == null || studentId.isBlank()) {
+        throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "ไม่พบข้อมูลนักศึกษาที่เข้าสู่ระบบ"
+        );
+    }
+
+    String cleanedStatus = null;
+
+    if (status != null && !status.isBlank()) {
+
+        cleanedStatus = status.strip().toUpperCase();
+
+        if (!Set.of("PENDING", "IN_PROGRESS")
+                .contains(cleanedStatus)) {
+
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "สถานะไม่ถูกต้อง"
+            );
+        }
+    }
+
+    // ตรวจสอบช่วงวันที่
+    if (from != null && to != null && from.isAfter(to)) {
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST,
+            "วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด"
+        );
+    }
+
+    LocalDateTime fromDate = from == null
+        ? null
+        : from.atStartOfDay();
+
+    LocalDateTime toDateExclusive = to == null
+        ? null
+        : to.plusDays(1).atStartOfDay();
+
+    // ค้นหาเฉพาะรายการของนักศึกษาคนนี้
+    return repository.findMine(
+        studentId.strip(),
+        cleanedStatus,
+        fromDate,
+        toDateExclusive
+    );
+    }
+
+    @Transactional(readOnly = true)
+    public RepairRequest getById(Long id) {
+
+        return repository.findById(id)
+            .orElseThrow(() ->
+                new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "ไม่พบรายการแจ้งซ่อม"
+                )
+            );
+    }
+
 
     private String required(
             String value,
