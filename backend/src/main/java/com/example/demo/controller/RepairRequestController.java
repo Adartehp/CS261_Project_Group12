@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.RepairRequest;
 import com.example.demo.dto.CreateRepairRequest;
+import com.example.demo.dto.UpdateRepairRequestStatus;
 import com.example.demo.service.RepairRequestService;
 
 import org.springframework.http.HttpStatus;
@@ -46,5 +47,13 @@ public class RepairRequestController {
             @PathVariable Long id) {
 
         return service.accept(id);
+    }
+
+    @PatchMapping("/{id}/status")
+    public RepairRequest updateStatus(
+            @PathVariable Long id,
+            @RequestBody UpdateRepairRequestStatus request) {
+
+        return service.updateStatus(id, request);
     }
 }

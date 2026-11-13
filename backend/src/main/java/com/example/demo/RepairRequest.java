@@ -37,6 +37,12 @@ public class RepairRequest {
 
     @Column(name = "accepted_at")
     private LocalDateTime acceptedAt;
+    
+    @Column(name = "completed_at")
+    private LocalDateTime completedAt;
+
+    @Column(name = "staff_note", length = 500)
+    private String staffNote;
 
     protected RepairRequest() {
     }
@@ -71,6 +77,15 @@ public class RepairRequest {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    public void updateStatus(String status, String staffNote) {
+        this.status = status;
+        this.staffNote = staffNote;
+
+        if ("DONE".equals(status)) {
+            this.completedAt = LocalDateTime.now();
+        }
     }
 
     public Long getId() {
@@ -111,5 +126,13 @@ public class RepairRequest {
 
     public LocalDateTime getAcceptedAt() {
         return acceptedAt;
+    }
+
+    public LocalDateTime getCompletedAt() {
+    return completedAt;
+    }
+
+    public String getStaffNote() {
+    return staffNote;
     }
 }
