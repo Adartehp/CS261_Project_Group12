@@ -13,6 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.time.LocalDate;
+import java.util.Locale;
 
 @Service
 public class RepairRequestService {
@@ -36,9 +38,46 @@ public class RepairRequestService {
     }
 
     @Transactional(readOnly = true)
-    public List<RepairRequest> getAll() {
+    public List<RepairRequest> getAll(
+            String status,
+            String area,
+            String room,
+            String studentId,
+            LocalDate from,
+            LocalDate to) {
 
-        return repository.findAll(
+        if (from != null && to != null && from.isAfter(to)) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "'from' must not be after 'to'"
+            );
+        }
+
+        String cleanStatus = status == null || status.isBlank()
+            ? null : status.strip().toUpperCase(Locale.ROOT);
+
+        String cleanArea = area == null || area.isBlank()
+            ? null : area.strip().toLowerCase(Locale.ROOT);
+
+        String cleanRoom = room == null || room.isBlank()
+            ? null : room.strip();
+
+        String cleanStudentId = studentId == null || studentId.isBlank()
+            ? null : studentId.strip();
+
+        LocalDateTime fromDate = from == null
+            ? null : from.atStartOfDay();
+
+        LocalDateTime toDate = to == null
+            ? null : to.plusDays(1).atStartOfDay();
+
+        return repository.findFiltered(
+            cleanStatus,
+            cleanArea,
+            cleanRoom,
+            cleanStudentId,
+            fromDate,
+            toDate,
             Sort.by(
                 Sort.Direction.DESC,
                 "createdAt",
