@@ -20,11 +20,14 @@ public class User {
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @Column(name = "password_hash", nullable = false, length = 100)
+    @Column(name = "password_hash", length = 100)
     private String passwordHash;
 
-    @Column(name = "full_name", nullable = false, length = 150)
+    @Column(nullable = false, length = 150)
     private String fullName;
+
+    @Column(unique = true, length = 150)
+    private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -39,10 +42,11 @@ public class User {
         // required by JPA
     }
 
-    public User(String username, String passwordHash, String fullName, Role role) {
+    public User(String username, String passwordHash, String fullName, String email, Role role) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.fullName = fullName;
+        this.email = email;
         this.role = role;
     }
 
@@ -50,5 +54,6 @@ public class User {
     public String getUsername() { return username; }
     public String getPasswordHash() { return passwordHash; }
     public String getFullName() { return fullName; }
+    public String getEmail(){ return email;}
     public Role getRole() { return role; }
 }
