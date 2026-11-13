@@ -27,6 +27,7 @@ services:
       DB_USERNAME: dormapp
       DB_PASSWORD: ${DOCKER_DB_PASSWORD:?Set DOCKER_DB_PASSWORD in .env}
       DDL_AUTO: validate
+      TZ: Asia/Bangkok
     depends_on:
       db:
         condition: service_healthy
