@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
     full_name     VARCHAR(150) NOT NULL,
     role          VARCHAR(20)  NOT NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_users_username (username)
+    UNIQUE KEY uk_users_username (username),
     UNIQUE KEY uk_users_email (email)
 
 ) ENGINE = InnoDB
