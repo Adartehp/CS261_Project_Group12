@@ -144,12 +144,16 @@ public class RepairRequestService {
 
         cleanedStatus = status.strip().toUpperCase();
 
-        if (!Set.of("PENDING", "IN_PROGRESS")
-                .contains(cleanedStatus)) {
+        if (!Set.of(
+            "PENDING",
+            "IN_PROGRESS",
+            "DONE",
+            "CANCELLED"
+        ).contains(cleanedStatus)) {
 
-            throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST,
-                "สถานะไม่ถูกต้อง"
+        throw new ResponseStatusException(
+            HttpStatus.BAD_REQUEST,
+            "สถานะไม่ถูกต้อง"
             );
         }
     }

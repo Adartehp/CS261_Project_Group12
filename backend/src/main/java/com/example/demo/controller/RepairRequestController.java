@@ -13,6 +13,7 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/repair-requests")
@@ -33,9 +34,35 @@ public class RepairRequestController {
 
     @GetMapping("/{id}")
     public RepairRequest getById(
-            @PathVariable Long id) {
+        @PathVariable Long id,
+        Principal principal,
+        Authentication authentication) {
 
-        return service.getById(id);
+    RepairRequest request = service.getById(id);
+
+    // ตรวจสอบว่าเป็นนักศึกษาหรือไม่
+    boolean isStudent = authentication != null &&
+        authentication.getAuthorities().stream()
+            .anyMatch(authority ->
+                authority.getAuthority().equals("ROLE_STUDENT") ||
+                authority.getAuthority().equals("STUDENT")
+            );
+
+    // ถ้าเป็นนักศึกษา ต้องดูได้เฉพาะรายการของตัวเอง
+    if (isStudent &&
+            (principal == null ||
+            !java.util.Objects.equals(
+                request.getStudentId(),
+                principal.getName()
+            ))) {
+
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "ไม่พบรายการแจ้งซ่อม"
+            );
+        }
+
+    return request;
     }
 
     @PostMapping
