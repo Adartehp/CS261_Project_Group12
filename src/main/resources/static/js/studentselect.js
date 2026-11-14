@@ -2,6 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const repairMenuBtn = document.getElementById('repairMenuBtn');
     const historyMenuBtn = document.getElementById('historyMenuBtn');
 
+    if (menuBtn) {
+        menuBtn.addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    }
+    
     if (repairMenuBtn) {
         repairMenuBtn.addEventListener('click', () => {
             // แก้ไขจาก 'student.html' เป็นชื่อไฟล์จริงของหน้าแจ้งซ่อม
@@ -16,4 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // window.location.href = 'history.html';
         });
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn = document.getElementById('menuBtn');
+
+});
+
 });
