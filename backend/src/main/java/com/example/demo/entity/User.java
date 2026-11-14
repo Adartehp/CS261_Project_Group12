@@ -50,6 +50,17 @@ public class User {
         this.role = role;
     }
 
+    /** สร้างนักศึกษาตอน login ครั้งแรก (username = รหัสนักศึกษา, ไม่มีรหัสผ่านในระบบ) */
+    public static User student(String studentId, String email, String fullName) {
+        return new User(studentId, null, fullName, email, Role.STUDENT);
+    }
+
+    /** อัปเดตชื่อและ email ล่าสุดจาก TU ทุกครั้งที่ login */
+    public void updateProfile(String email, String fullName) {
+        this.email = email;
+        this.fullName = fullName;
+    }
+
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getPasswordHash() { return passwordHash; }

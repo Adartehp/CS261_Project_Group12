@@ -5,6 +5,9 @@ import com.example.demo.entity.User;
 import com.example.demo.entity.User.Role;
 import com.example.demo.exception.AuthException;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.tu.StudentInfo;
+import com.example.demo.tu.TuApiClient;
+import com.example.demo.tu.TuApiUnavailableException;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,6 +34,9 @@ class AuthServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private TuApiClient tuApiClient;
 
     @InjectMocks
     private AuthService authService;
@@ -132,5 +139,114 @@ class AuthServiceTest {
                 HttpStatus.FORBIDDEN,
                 exception.getStatus()
         );
+    }
+
+    private static final String ID = "6609999999";
+    private static final String EMAIL = "somchai.jai@dome.tu.ac.th";
+
+    // Test 4 (US1-B TC02): นักศึกษากรอก email + รหัสนักศึกษาที่หน้าเจ้าหน้าที่ -> 403
+    @Test
+    void loginStaff_shouldThrow403_whenStudentUsesTuCredentials() {
+
+        when(userRepository.findByUsername(EMAIL)).thenReturn(Optional.empty());
+        when(userRepository.findByEmailIgnoreCase(EMAIL))
+                .thenReturn(Optional.of(User.student(ID, EMAIL, "สมชาย ใจดี")));
+
+        AuthException exception = assertThrows(AuthException.class,
+                () -> authService.loginStaff(EMAIL, ID));
+
+        assertEquals(HttpStatus.FORBIDDEN, exception.getStatus());
+    }
+
+    // Test 5: ไม่พบผู้ใช้เลย -> 401
+    @Test
+    void loginStaff_shouldThrow401_whenUserNotFound() {
+
+        when(userRepository.findByUsername("nobody")).thenReturn(Optional.empty());
+        when(userRepository.findByEmailIgnoreCase("nobody")).thenReturn(Optional.empty());
+
+        AuthException exception = assertThrows(AuthException.class,
+                () -> authService.loginStaff("nobody", "x"));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus());
+    }
+
+    // Test 6 (US1-A TC01): email + รหัสนักศึกษาถูก -> login ได้ และบันทึกลง users
+    @Test
+    void loginStudent_shouldCreateUser_whenTuConfirmsEmail() {
+
+        when(tuApiClient.getStudentInfo(ID))
+                .thenReturn(Optional.of(new StudentInfo(ID, EMAIL, "สมชาย ใจดี")));
+        when(userRepository.findByUsername(ID)).thenReturn(Optional.empty());
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        User user = authService.loginStudent("Somchai.Jai@dome.tu.ac.th", ID);
+
+        assertEquals(ID, user.getUsername());
+        assertEquals(EMAIL, user.getEmail());
+        assertEquals("สมชาย ใจดี", user.getFullName());
+        assertEquals(Role.STUDENT, user.getRole());
+    }
+
+    // Test 7: login ครั้งต่อไป อัปเดตชื่อจาก TU
+    @Test
+    void loginStudent_shouldUpdateProfile_whenUserExists() {
+
+        when(tuApiClient.getStudentInfo(ID))
+                .thenReturn(Optional.of(new StudentInfo(ID, EMAIL, "ชื่อใหม่")));
+        when(userRepository.findByUsername(ID))
+                .thenReturn(Optional.of(User.student(ID, EMAIL, "ชื่อเก่า")));
+        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        assertEquals("ชื่อใหม่", authService.loginStudent(EMAIL, ID).getFullName());
+    }
+
+    // Test 8 (US1-A TC02): email ไม่ตรงกับรหัสนักศึกษา -> 401
+    @Test
+    void loginStudent_shouldThrow401_whenEmailDoesNotMatch() {
+
+        when(tuApiClient.getStudentInfo(ID))
+                .thenReturn(Optional.of(new StudentInfo(ID, EMAIL, "สมชาย ใจดี")));
+
+        AuthException exception = assertThrows(AuthException.class,
+                () -> authService.loginStudent("other@dome.tu.ac.th", ID));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus());
+    }
+
+    // Test 9: TU ไม่พบรหัสนี้ -> 401
+    @Test
+    void loginStudent_shouldThrow401_whenTuDoesNotKnowId() {
+
+        when(tuApiClient.getStudentInfo(ID)).thenReturn(Optional.empty());
+
+        AuthException exception = assertThrows(AuthException.class,
+                () -> authService.loginStudent(EMAIL, ID));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus());
+    }
+
+    // Test 10: รหัสนักศึกษาไม่ใช่ตัวเลข 10 หลัก -> 401 โดยไม่เรียก TU
+    @Test
+    void loginStudent_shouldThrow401_whenIdIsNotTenDigits() {
+
+        AuthException exception = assertThrows(AuthException.class,
+                () -> authService.loginStudent(EMAIL, "abc"));
+
+        assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus());
+        verifyNoInteractions(tuApiClient);
+    }
+
+    // Test 11: TU API ล่ม -> 503
+    @Test
+    void loginStudent_shouldThrow503_whenTuIsDown() {
+
+        when(tuApiClient.getStudentInfo(ID))
+                .thenThrow(new TuApiUnavailableException("down", null));
+
+        AuthException exception = assertThrows(AuthException.class,
+                () -> authService.loginStudent(EMAIL, ID));
+
+        assertEquals(HttpStatus.SERVICE_UNAVAILABLE, exception.getStatus());
     }
 }
