@@ -207,3 +207,20 @@ body {
 .lang-option:hover {
     color: #e65c19;
 }
+
+.top-bar {
+    display: flex;
+    justify-content: space-between; /* ดันตัวซ้ายสุดและขวาสุดให้อยู่ริมพอดี */
+    align-items: center;             /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+    padding: 0 20px;                 /* เว้นระยะขอบซ้าย-ขวาไม่ให้ชิดเกินไป */
+    height: 60px;                    /* ปรับความสูงแถบสีส้มตามต้องการ (ถ้ามีอยู่แล้วให้ใช้ของเดิมได้เลย) */
+    background-color: #e65c19 ;       /* สีส้มของแถบ (ถ้ามีอยู่แล้วไม่ต้องแก้) */
+}
+
+/* ตกแต่งไอคอนให้เป็นสีขาวและขนาดพอดี */
+.top-bar .menu-icon, 
+.top-bar .profile-icon {
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+}
