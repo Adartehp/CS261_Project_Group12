@@ -27,8 +27,11 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    // Staff Login
-    public User loginStaff(String username, String password) {
+    // ตรวจสอบ Login ทั้ง Student และ Staff
+    public User login(
+            String username,
+            String rawPassword,
+            Role expectedRole) {
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new AuthException(
@@ -36,18 +39,11 @@ public class AuthService {
                         BAD_CREDENTIALS
                 ));
 
-        // ตรวจสอบ Role ก่อน
-        if (user.getRole() != Role.STAFF) {
-            throw new AuthException(
-                    HttpStatus.FORBIDDEN,
-                    "บัญชีนักศึกษาไม่สามารถเข้าสู่ระบบฝั่งเจ้าหน้าที่ได้"
-            );
-        }
-
-        // ตรวจสอบ Password ด้วย BCrypt
+        // ตรวจสอบ Password ก่อน Role
         if (user.getPasswordHash() == null ||
                 !passwordEncoder.matches(
-                        password, user.getPasswordHash())) {
+                        rawPassword,
+                        user.getPasswordHash())) {
 
             throw new AuthException(
                     HttpStatus.UNAUTHORIZED,
@@ -55,7 +51,25 @@ public class AuthService {
             );
         }
 
+        // ตรวจสอบ Role หลัง Password ถูกต้อง
+        if (user.getRole() != expectedRole) {
+
+            String message = (user.getRole() == Role.STUDENT)
+                    ? "บัญชีนักศึกษาไม่สามารถเข้าสู่ระบบฝั่งเจ้าหน้าที่ได้"
+                    : "บัญชีเจ้าหน้าที่ไม่สามารถเข้าสู่ระบบฝั่งนักศึกษาได้";
+
+            throw new AuthException(
+                    HttpStatus.FORBIDDEN,
+                    message
+            );
+        }
+
         return user;
+    }
+
+    // Staff Login
+    public User loginStaff(String username, String password) {
+        return login(username, password, Role.STAFF);
     }
 
     // ตรวจสอบผู้ใช้งานจาก Session

@@ -3,27 +3,26 @@ package com.example.demo.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.SecurityContextRepository;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // ใช้ Session เก็บข้อมูลการ Login
     @Bean
     public SecurityContextRepository securityContextRepository() {
         return new HttpSessionSecurityContextRepository();
     }
 
-    // ตั้งค่าระบบ Security
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
@@ -31,42 +30,70 @@ public class SecurityConfig {
             throws Exception {
 
         http
-            // ป้องกัน CSRF
-            .csrf(csrf -> csrf
-                .csrfTokenRepository(
-                    CookieCsrfTokenRepository.withHttpOnlyFalse()
-                )
-            )
+            .csrf(AbstractHttpConfigurer::disable)
 
-            // ใช้ Session เก็บ SecurityContext
             .securityContext(context -> context
                 .securityContextRepository(securityContextRepository)
             )
 
-            // สร้าง Session เมื่อจำเป็น
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
             )
 
-            // ไม่ใช้ Basic Authentication และ Form Login
             .httpBasic(basic -> basic.disable())
             .formLogin(form -> form.disable())
             .logout(logout -> logout.disable())
 
-            // กำหนดสิทธิ์การเข้าถึง API
+            .exceptionHandling(ex -> ex
+                .authenticationEntryPoint((req, res, e) -> {
+                    res.setStatus(401);
+                    res.setContentType("application/json");
+                    res.setCharacterEncoding("UTF-8");
+                    res.getWriter().write(
+                        "{\"message\":\"กรุณาเข้าสู่ระบบ\"}"
+                    );
+                })
+            )
+
             .authorizeHttpRequests(auth -> auth
+
+                // Public endpoints
                 .requestMatchers(
                     "/api/auth/student/login",
                     "/api/auth/staff/login",
-                    "/api/auth/csrf"
+                    "/actuator/health"
                 ).permitAll()
+
+                // Login required
+                .requestMatchers(
+                    "/api/auth/me",
+                    "/api/auth/logout"
+                ).authenticated()
+
+                // Staff only
+                .requestMatchers(
+                    HttpMethod.PATCH,
+                    "/api/repair-requests/*/status",
+                    "/api/repair-requests/*/accept"
+                ).hasRole("STAFF")
+
+                .requestMatchers(
+                    HttpMethod.GET,
+                    "/api/repair-requests"
+                ).hasRole("STAFF")
+
+                // Student only
+                .requestMatchers(
+                    "/api/repair-requests/mine"
+                ).hasRole("STUDENT")
+
+                // All remaining APIs require login
                 .anyRequest().authenticated()
             );
 
         return http.build();
     }
 
-    // ใช้ BCrypt สำหรับตรวจสอบรหัสผ่าน
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -5,7 +5,7 @@ import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
 import com.example.demo.entity.User;
 import com.example.demo.service.AuthService;
-import com.example.demo.exception.AuthException;
+import com.example.demo.entity.User.Role;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,14 +14,12 @@ import jakarta.validation.Valid;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.context.SecurityContextRepository;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,10 +51,13 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response) {
 
-        throw new AuthException(
-                HttpStatus.SERVICE_UNAVAILABLE,
-                "ระบบตรวจสอบนักศึกษายังไม่พร้อมใช้งาน"
+        User user = authService.login(
+                body.username(),
+                body.password(),
+                Role.STUDENT
         );
+
+        return createSession(user, request, response);
     }
 
     /** US1-B: เจ้าหน้าที่ login */
@@ -138,8 +139,5 @@ public class AuthController {
         );
     }
     
-    @GetMapping("/csrf")
-    public CsrfToken csrf(CsrfToken csrfToken) {
-        return csrfToken;
-    }
+    
 }

@@ -20,13 +20,13 @@ public class User {
     @Column(nullable = false, unique = true, length = 50)
     private String username;
 
-    @Column(name = "password_hash", length = 100)
+    @Column(name = "password_hash", nullable = true , length = 100)
     private String passwordHash;
 
     @Column(nullable = false, length = 150)
     private String fullName;
 
-    @Column(unique = true, length = 150)
+    @Column(unique = true , nullable = true , length = 150)
     private String email;
 
     @Enumerated(EnumType.STRING)
