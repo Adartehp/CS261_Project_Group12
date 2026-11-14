@@ -2,13 +2,15 @@ SET NAMES utf8mb4;
 
 CREATE TABLE IF NOT EXISTS users (
     id            BIGINT       NOT NULL AUTO_INCREMENT,
-    username      VARCHAR(50)  NOT NULL,
-    email         VARCHAR(100) NULL,
+    username      VARCHAR(150)  NOT NULL,
+    email         VARCHAR(150) NULL,
     password_hash VARCHAR(100) NULL,
     full_name     VARCHAR(150) NOT NULL,
     role          VARCHAR(20)  NOT NULL,
     PRIMARY KEY (id),
-    UNIQUE KEY uk_users_username (username)
+    UNIQUE KEY uk_users_username (username),
+    UNIQUE KEY uk_users_email (email)
+
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_unicode_ci;

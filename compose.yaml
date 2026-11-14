@@ -28,6 +28,7 @@ services:
       DB_PASSWORD: ${DOCKER_DB_PASSWORD:?Set DOCKER_DB_PASSWORD in .env}
       DDL_AUTO: validate
       TZ: Asia/Bangkok
+      TU_API_KEY: ${TU_API_KEY:-}
     depends_on:
       db:
         condition: service_healthy
