@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     </div>
                     <div class="pt-3 flex justify-end">
                         <button type="button" onclick="acceptRequest(${item.id})" class="bg-[#d63b15] hover:bg-[#b82d0b] text-white px-5 py-2 rounded-xl text-sm font-semibold transition shadow-sm">
-                            <i class="fa-solid fa-check mr-1"></i> กดรับเรื่อง
+                            <i class="fa-solid fa-check mr-1"></i>รับเรื่อง
                         </button>
                     </div>
                 `;

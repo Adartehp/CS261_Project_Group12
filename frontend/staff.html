@@ -6,10 +6,11 @@
     <title>ดูประวัติการแจ้งซ่อม</title>
     <link rel="stylesheet" href="css/staff.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-[#f4f9ff] min-h-screen flex flex-col">
 
-<header class="navbar" style="display: flex; justify-content: space-between; align-items: center;">
+    <header class="navbar" style="display: flex; justify-content: space-between; align-items: center;">
         <a href="staffselect.html" class="back-btn" style="color: white; text-decoration: none; font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 8px; border: none;">
             <i class="fa-solid fa-arrow-left"></i>
             <span>ย้อนกลับ</span>
@@ -21,9 +22,11 @@
         </button>
     </header>
 
-    <main class="container">
-        <h1 class="page-title">ประวัติ</h1>
-        <div class="main-scroll-container" id="notificationContainer"></div>
+    <main class="max-w-[720px] w-full mx-auto p-6 flex-1">
+        <h1 class="page-title text-2xl font-bold text-center mb-5 text-[#111]">ประวัติ</h1>
+        
+        <!-- นำกรอบการ์ดชั้นนอกออก ให้รายการเรียงต่อกันและเลื่อนดูได้เลย -->
+        <div id="notificationContainer" class="space-y-4 pb-8"></div>
     </main>
 
     <div class="modal-overlay" id="modalOverlay">
@@ -37,7 +40,7 @@
                 <div class="modal-input-lg"></div>
             </div>
             <div class="modal-btn-container">
-                <button class="submit-btn" id="submitBtn">รับเรื่อง</button>
+                <button class="submit-btn" id="submitBtn">ปิด</button>
             </div>
         </div>
     </div>
