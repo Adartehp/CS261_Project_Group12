@@ -1,4 +1,16 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // ตรวจสอบสิทธิ์เจ้าหน้าที่
+    const currentUser = await requireAuth('STAFF');
+    if (!currentUser) return;
+
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
+                logout();
+            }
+        });
+    }
     const container = document.getElementById('notificationContainer');
     const modalOverlay = document.getElementById('modalOverlay');
     const submitBtn = document.getElementById('submitBtn');
@@ -20,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function callApi(url, options = {}) {
+        options.credentials = 'same-origin';
         const response = await fetch(url, options);
         const data = await response.json().catch(() => null);
 

@@ -1,4 +1,13 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // ตรวจสอบสิทธิ์นักศึกษา
+    const currentUser = await requireAuth('STUDENT');
+    if (currentUser) {
+        const studentIdEl = document.getElementById('studentId');
+        if (studentIdEl && !studentIdEl.value) {
+            studentIdEl.value = currentUser.username;
+            studentIdEl.readOnly = true;
+        }
+    }
     const menuHomeBtn = document.getElementById('menuHomeBtn');
     const backBtn = document.getElementById('backBtn');
     const repairForm = document.getElementById('repairForm');
@@ -16,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeErrorBtn = document.getElementById('closeErrorBtn');
 
     function goToHomePage() {
-        window.location.href = 'index.html';
+        window.location.href = 'studentselect.html';
     }
 
     menuHomeBtn.addEventListener('click', goToHomePage);
@@ -66,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'same-origin',
                 body: JSON.stringify(requestData)
             });
 
