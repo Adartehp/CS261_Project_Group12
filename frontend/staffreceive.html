@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายการรับเรื่อง (เจ้าหน้าที่)</title>
+    <link rel="stylesheet" href="css/staff.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#f4f9ff] min-h-screen flex flex-col">
+
+    <header class="navbar bg-[#d63b15] px-5 h-[60px] flex justify-between items-center text-white">
+        <a href="staffselect.html" class="flex items-center gap-2 text-white text-sm font-medium">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>ย้อนกลับ</span>
+        </a>
+        <button type="button" id="logoutBtn" class="border border-white/70 px-3 py-1.5 rounded-lg text-sm">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>ออกจากระบบ</span>
+        </button>
+    </header>
+
+    <main class="max-w-[720px] w-full mx-auto p-6 flex-1">
+        <h1 class="text-2xl font-bold text-center mb-5 text-[#111]">รายการรอรับเรื่อง</h1>
+
+        <div class="bg-[#e4f1fe] border border-[#c4ddf5] p-6 rounded-[20px] shadow-sm">
+            <div id="loading-receive" class="text-center text-gray-500 py-6">กำลังโหลดรายการรอรับเรื่อง...</div>
+            <div id="receive-container" class="space-y-4" style="display: none;"></div>
+        </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/staffreceive.js"></script>
+</body>
+</html>

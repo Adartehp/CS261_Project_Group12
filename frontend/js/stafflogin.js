@@ -185,7 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (userData) {
                         sessionStorage.setItem("currentUser", JSON.stringify(userData));
                     }
-                    window.location.href = "staff.html";
+                    window.location.href = "staffselect.html";
                     return;
                 }
 
@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         role: "STAFF"
                     };
                     sessionStorage.setItem("currentUser", JSON.stringify(mockUser));
-                    window.location.href = "staff.html";
+                    window.location.href = "staffselect.html";
                     return;
                 }
 
