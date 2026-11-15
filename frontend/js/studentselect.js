@@ -1,5 +1,21 @@
 document.addEventListener("DOMContentLoaded", async () => {
-    // โหลดภาษาที่บันทึกไว้
+    // 1. ผูกปุ่มกดเปลี่ยนหน้าไว้ก่อนเลย (ปุ่มจะกดติด 100% แม้ยังโหลด Auth ไม่เสร็จ)
+    const repairMenuBtn = document.getElementById("repairMenuBtn");
+    const historyMenuBtn = document.getElementById("historyMenuBtn");
+
+    if (repairMenuBtn) {
+        repairMenuBtn.addEventListener("click", () => {
+            window.location.href = "student.html";
+        });
+    }
+
+    if (historyMenuBtn) {
+        historyMenuBtn.addEventListener("click", () => {
+            window.location.href = "studenthistory.html";
+        });
+    }
+
+    // 2. โหลดภาษาที่บันทึกไว้
     let currentLang = "th";
     try {
         currentLang = localStorage.getItem("app_lang") || "th";
@@ -8,21 +24,17 @@ document.addEventListener("DOMContentLoaded", async () => {
     const translations = {
         th: {
             docTitle: "เมนูนักศึกษา",
-            loading: "กำลังโหลด...",
             logoutBtn: "ออกจากระบบ",
             logoutConfirm: "คุณต้องการออกจากระบบหรือไม่?",
             repairMenu: "แจ้งซ่อม",
-            historyMenu: "ประวัติ",
-            historyAlert: "ระบบประวัติการแจ้งซ่อมกำลังอยู่ระหว่างการพัฒนา (Task 33)"
+            historyMenu: "ประวัติ"
         },
         en: {
             docTitle: "Student Menu",
-            loading: "Loading...",
             logoutBtn: "Log Out",
             logoutConfirm: "Do you want to log out?",
             repairMenu: "Request Repair",
-            historyMenu: "History",
-            historyAlert: "The repair history feature is currently under development (Task 33)"
+            historyMenu: "History"
         }
     };
 
@@ -38,7 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (repairMenuText) repairMenuText.textContent = t.repairMenu;
     if (historyMenuText) historyMenuText.textContent = t.historyMenu;
 
-    // ตรวจสอบสิทธิ์ว่าเป็นนักศึกษาที่ล็อกอินอยู่หรือไม่
+    // 3. ตรวจสอบสิทธิ์และแสดงชื่อนักศึกษา
     const user = await requireAuth("STUDENT");
     if (!user) return;
 
@@ -53,21 +65,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (confirm(t.logoutConfirm)) {
                 logout();
             }
-        });
-    }
-
-    const repairMenuBtn = document.getElementById("repairMenuBtn");
-    const historyMenuBtn = document.getElementById("historyMenuBtn");
-
-    if (repairMenuBtn) {
-        repairMenuBtn.addEventListener("click", () => {
-            window.location.href = "student.html";
-        });
-    }
-
-    if (historyMenuBtn) {
-        historyMenuBtn.addEventListener("click", () => {
-            alert(t.historyAlert);
         });
     }
 });

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายการรับเรื่อง</title>
+    <link rel="stylesheet" href="css/student.css">   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#f4f9ff] min-h-screen flex flex-col">
+
+    <header class="navbar bg-[#d63b15] px-5 h-[60px] flex justify-between items-center text-white">
+        <a href="studentselect.html" class="back-btn flex items-center gap-2 text-white text-sm font-medium">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>ย้อนกลับ</span>
+        </a>
+        <button type="button" id="logoutBtn" class="logout-btn border border-white/70 px-3 py-1.5 rounded-lg text-sm">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>ออกจากระบบ</span>
+        </button>
+    </header>
+
+    <main class="main-container max-w-[720px] w-full mx-auto p-7 flex-1">
+        <h1 class="page-title text-2xl font-bold text-center mb-5 text-[#111]">รายการรับเรื่องทั้งหมด</h1>
+
+        <div class="form-card bg-[#e4f1fe] border border-[#c4ddf5] p-6 rounded-[20px] shadow-sm">
+            <div id="loading-receive" class="text-center text-gray-500 py-6">กำลังโหลดข้อมูลรายการรับเรื่อง...</div>
+            
+            <!-- แสดงรายการที่ดึงมาจาก API จริง -->
+            <div id="receive-container" class="space-y-4" style="display: none;"></div>
+        </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const currentUser = await requireAuth('STUDENT');
+            if (!currentUser) return;
+
+            const loadingReceive = document.getElementById('loading-receive');
+            const receiveContainer = document.getElementById('receive-container');
+
+            try {
+                const response = await fetch('/api/repair-requests', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) throw new Error('ไม่สามารถดึงข้อมูลได้');
+
+                const data = await response.json();
+                loadingReceive.style.display = 'none';
+                receiveContainer.style.display = 'block';
+
+                if (!data || data.length === 0) {
+                    receiveContainer.innerHTML = '<p class="text-center text-gray-500">ยังไม่มีรายการรับเรื่องในระบบ</p>';
+                    return;
+                }
+
+                receiveContainer.innerHTML = '';
+                data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white p-4 rounded-xl border border-[#c4ddf5] shadow-sm space-y-2';
+                    card.innerHTML = `
+                        <div class="text-sm text-gray-700">หัวข้อ: <strong>${item.repairItem || item.area || '-'}</strong></div>
+                        <div class="text-sm text-gray-600">ห้อง: ${item.roomNumber || '-'} | วันที่: ${item.createdAt || '-'}</div>
+                        <div class="text-sm text-[#d63b15] font-semibold">สถานะ: ${item.status || 'รอดำเนินการ'}</div>
+                    `;
+                    receiveContainer.appendChild(card);
+                });
+            } catch (err) {
+                loadingReceive.textContent = 'เกิดข้อผิดพลาดในการโหลดข้อมูล';
+                loadingReceive.style.color = '#dc2626';
+            }
+        });
+    </script>
+</body>
+</html>

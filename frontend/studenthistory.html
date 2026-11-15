@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สถานะและประวัติการแจ้งซ่อม</title>
+    <link rel="stylesheet" href="css/student.css">   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#f4f9ff] min-h-screen flex flex-col">
+
+    <header class="navbar bg-[#d63b15] px-5 h-[60px] flex justify-between items-center text-white">
+        <a href="studentselect.html" class="back-btn flex items-center gap-2 text-white text-sm font-medium">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>ย้อนกลับ</span>
+        </a>
+        <button type="button" id="logoutBtn" class="logout-btn border border-white/70 px-3 py-1.5 rounded-lg text-sm">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>ออกจากระบบ</span>
+        </button>
+    </header>
+
+    <main class="main-container max-w-[720px] w-full mx-auto p-6 flex-1 space-y-6">
+        
+        <!-- กล่องข้อมูลนักศึกษาที่ลงทะเบียน -->
+        <section class="bg-white border border-[#c4ddf5] p-4 rounded-[20px] shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-[#fbece8] text-[#d63b15] flex items-center justify-center text-xl">
+                <i class="fa-solid fa-user-graduate"></i>
+            </div>
+            <div>
+                <div class="text-base font-bold text-gray-800" id="student-fullname">กำลังโหลดชื่อนักศึกษา...</div>
+                <div class="text-sm text-gray-600">รหัสนักศึกษา : <strong id="student-id">-</strong></div>
+            </div>
+        </section>
+
+        <!-- ส่วนสถานะ (Status Section) -->
+        <section>
+            <h2 class="text-xl font-bold text-gray-800 mb-3">สถานะ</h2>
+            <div class="bg-[#e4f1fe] border border-[#c4ddf5] p-5 rounded-[20px] shadow-sm space-y-4">
+                <div id="latest-status-loading" class="text-center text-gray-500 py-4">กำลังโหลดข้อมูลสถานะล่าสุด...</div>
+                
+                <div id="latest-status-content" class="space-y-3" style="display: none;">
+                    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700">
+                        <div>ห้อง : <strong id="val-room">-</strong></div>
+                        <div>วันที่ : <strong id="val-date">-</strong></div>
+                        <div>พื้นที่ : <strong id="val-area">-</strong></div>
+                        <div>เวลา : <strong id="val-time">-</strong></div>
+                    </div>
+                    <div class="text-sm text-gray-700">
+                        รายการซ่อม : <strong id="val-repairItem">-</strong>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="pt-4 px-4">
+                        <div class="relative flex justify-between items-center">
+                            <div class="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-gray-300 z-0 mx-6"></div>
+                            
+                            <div class="flex flex-col items-center z-10">
+                                <div id="step-1" class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center text-sm font-bold shadow">1</div>
+                                <span class="text-xs text-gray-600 mt-1">รอดำเนินการ</span>
+                            </div>
+                            <div class="flex flex-col items-center z-10">
+                                <div id="step-2" class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center text-sm font-bold shadow">2</div>
+                                <span class="text-xs text-gray-600 mt-1">ดำเนินการ</span>
+                            </div>
+                            <div class="flex flex-col items-center z-10">
+                                <div id="step-3" class="w-8 h-8 rounded-full bg-gray-300 text-white flex items-center justify-center text-sm font-bold shadow">3</div>
+                                <span class="text-xs text-gray-600 mt-1">เสร็จสิ้น</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ส่วนประวัติ (History Section) -->
+        <section>
+            <h2 class="text-xl font-bold text-gray-800 mb-3">ประวัติ</h2>
+            <div class="bg-[#e4f1fe] border border-[#c4ddf5] p-5 rounded-[20px] shadow-sm">
+                <div id="history-loading" class="text-center text-gray-500 py-4">กำลังโหลดประวัติ...</div>
+                <div id="history-container" class="space-y-3" style="display: none;"></div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/studenthistory.js"></script>
+</body>
+</html>
