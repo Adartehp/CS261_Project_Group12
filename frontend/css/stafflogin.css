@@ -234,34 +234,3 @@ body {
 .btn-login:hover:not(:disabled) {
     background-color: #b82d0b;
 }
-
-.divider {
-    border: none;
-    border-top: 1px solid #c4ddf5;
-    margin: 20px 0 16px 0;
-}
-
-.language-switch {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    font-size: 14px;
-    font-weight: bold;
-    color: #555555;
-}
-
-.lang-option {
-    cursor: pointer;
-    padding: 2px 6px;
-    border-radius: 4px;
-    transition: color 0.2s, background-color 0.2s;
-}
-
-.lang-option.active {
-    color: #111111;
-    background-color: rgba(255, 255, 255, 0.7);
-}
-
-.lang-option:hover {
-    color: #d63b15;
-}
