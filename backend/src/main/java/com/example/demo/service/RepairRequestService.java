@@ -49,7 +49,7 @@ public class RepairRequestService {
         if (from != null && to != null && from.isAfter(to)) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
-                "'from' must not be after 'to'"
+                "วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด"
             );
         }
 
