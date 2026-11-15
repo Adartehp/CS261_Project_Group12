@@ -6,15 +6,14 @@
 }
 
 body {
-    background-color: #f0f4f9;
+    background-color: #f4f9ff;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
-/* แถบสีส้มด้านบน */
 .top-bar {
-    background-color: #e65c19;
+    background-color: #d63b15;
     height: 60px;
     width: 100%;
     display: flex;
@@ -37,7 +36,6 @@ body {
     opacity: 0.85;
 }
 
-/* ส่วนจัดวางการ์ดให้อยู่ตรงกลาง */
 .main-container {
     flex: 1;
     display: flex;
@@ -46,25 +44,23 @@ body {
     padding: 20px;
 }
 
-/* การ์ดเข้าสู่ระบบเจ้าหน้าที่ */
 .login-card {
-    background-color: #ffffff;
+    background-color: #e4f1fe;
     width: 100%;
     max-width: 380px;
     border-radius: 20px;
     padding: 30px 24px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
 
 .card-title {
     font-size: 24px;
+    text-align: center;
     font-weight: bold;
-    color: #1e293b;
+    color: #111111;
     margin-bottom: 20px;
 }
 
-/* กล่องแจ้งเตือนข้อผิดพลาด */
 .error-msg {
     background-color: #fde8e8;
     color: #c81e1e;
@@ -76,7 +72,6 @@ body {
     line-height: 1.4;
 }
 
-/* ช่องกรอกข้อมูล */
 .input-group {
     margin-bottom: 16px;
 }
@@ -85,7 +80,7 @@ body {
     display: block;
     font-size: 14px;
     font-weight: 500;
-    color: #475569;
+    color: #333333;
     margin-bottom: 6px;
 }
 
@@ -93,32 +88,76 @@ body {
     width: 100%;
     height: 42px;
     padding: 0 14px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid transparent;
     border-radius: 12px;
-    background-color: #f8fafc;
+    background-color: #ffffff;
     font-size: 14px;
     outline: none;
-    color: #1e293b;
-    transition: border-color 0.2s, background-color 0.2s;
+    color: #333333;
+    transition: border-color 0.2s;
 }
 
 .input-group input:focus {
-    border-color: #e65c19;
-    background-color: #ffffff;
+    border-color: #d63b15;
 }
 
 .input-group input::placeholder {
-    color: #94a3b8;
+    color: #999999;
 }
 
-/* ตัวเลือก จำฉันไว้ & ลืมรหัสผ่าน */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.password-wrapper input {
+    width: 100%;
+    height: 42px;
+    padding: 0 44px 0 14px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background-color: #ffffff;
+    font-size: 14px;
+    outline: none;
+    color: #333333;
+    transition: border-color 0.2s;
+}
+
+.password-wrapper input:focus {
+    border-color: #d63b15;
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    color: #777777;
+    font-size: 16px;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.toggle-password-btn:hover {
+    color: #d63b15;
+}
+
 .form-options {
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 13px;
     margin-bottom: 20px;
-    color: #64748b;
+    color: #444444;
 }
 
 .remember-me {
@@ -135,8 +174,7 @@ body {
 .custom-checkbox {
     width: 16px;
     height: 16px;
-    background-color: #f1f5f9;
-    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
     border-radius: 4px;
     margin-right: 8px;
     display: inline-block;
@@ -144,8 +182,7 @@ body {
 }
 
 .remember-me input:checked + .custom-checkbox {
-    background-color: #e65c19;
-    border-color: #e65c19;
+    background-color: #d63b15;
 }
 
 .remember-me input:checked + .custom-checkbox::after {
@@ -161,7 +198,7 @@ body {
 }
 
 .forgot-password {
-    color: #64748b;
+    color: #333333;
     text-decoration: none;
 }
 
@@ -169,7 +206,6 @@ body {
     text-decoration: underline;
 }
 
-/* ปุ่มกดร่วม */
 .btn {
     width: 100%;
     height: 44px;
@@ -190,42 +226,42 @@ body {
     cursor: not-allowed;
 }
 
-/* ปุ่ม Log in สีส้ม */
 .btn-login {
-    background-color: #e65c19;
+    background-color: #d63b15;
     color: #ffffff;
 }
 
 .btn-login:hover:not(:disabled) {
-    background-color: #d04f10;
+    background-color: #b82d0b;
 }
 
-/* เส้นแบ่ง */
 .divider {
     border: none;
-    border-top: 1px solid #e2e8f0;
-    margin: 24px 0 16px 0;
+    border-top: 1px solid #c4ddf5;
+    margin: 20px 0 16px 0;
 }
 
-/* ตัวเลือกภาษา TH / EN */
 .language-switch {
     display: flex;
     justify-content: center;
     gap: 12px;
     font-size: 14px;
     font-weight: bold;
-    color: #64748b;
+    color: #555555;
 }
 
 .lang-option {
     cursor: pointer;
-    padding: 2px 4px;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: color 0.2s, background-color 0.2s;
 }
 
 .lang-option.active {
-    color: #0f172a;
+    color: #111111;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 .lang-option:hover {
-    color: #e65c19;
+    color: #d63b15;
 }

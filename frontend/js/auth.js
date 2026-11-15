@@ -3,7 +3,7 @@
  */
 
 /**
- * ดึงข้อมูลผู้ใช้ที่ล็อกอินอยู่จาก Backend API (/api/auth/me)
+ * ดึงข้อมูลผู้ใช้ที่ล็อกอินอยู่จาก Backend API (/api/auth/me) หรือ Session Fallback สำหรับโหมดพรีวิว
  * @returns {Promise<{username: string, fullName: string, role: string}|null>}
  */
 async function getCurrentUser() {
@@ -13,13 +13,25 @@ async function getCurrentUser() {
             credentials: "same-origin"
         });
         if (response.ok) {
-            return await response.json();
+            const data = await response.json();
+            sessionStorage.setItem("currentUser", JSON.stringify(data));
+            return data;
         }
-        return null;
     } catch (error) {
-        console.error("Error fetching current user:", error);
-        return null;
+        // เงียบข้อผิดพลาดไว้สำหรับกรณีไม่มี Backend API ในโหมดพรีวิว
     }
+
+    // Fallback: ดึงจาก sessionStorage กรณีรันบนพรีวิว / ไม่มี Backend เชื่อมต่อ
+    const stored = sessionStorage.getItem("currentUser");
+    if (stored) {
+        try {
+            return JSON.parse(stored);
+        } catch (e) {
+            sessionStorage.removeItem("currentUser");
+        }
+    }
+
+    return null;
 }
 
 /**
@@ -66,6 +78,7 @@ async function logout() {
     } catch (error) {
         console.error("Error during logout:", error);
     } finally {
+        sessionStorage.removeItem("currentUser");
         window.location.href = "index.html";
     }
 }

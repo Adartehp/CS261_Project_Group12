@@ -6,14 +6,14 @@
 }
 
 body {
-    background-color: #eaf5ff; 
+    background-color: #f4f9ff; 
     min-height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
 .top-bar {
-    background-color: #e65c19;
+    background-color: #d63b15;
     height: 60px;
     width: 100%;
     display: flex;
@@ -55,7 +55,6 @@ body {
     border-color: #ffffff;
 }
 
-/* จัดปุ่มกึ่งกลางหน้าจอ */
 .main-container {
     flex: 1;
     display: flex;
@@ -73,9 +72,9 @@ body {
 }
 
 .menu-btn {
-    background-color: #f6c8b1;
-    color: #2b303a;
-    border: 1px solid #dca990;
+    background-color: #d63b15;
+    color: #ffffff;
+    border: 1px solid #b82d0b;
     border-radius: 16px;
     padding: 22px 0;
     font-size: 24px;
@@ -89,7 +88,7 @@ body {
 }
 
 .menu-btn:hover {
-    background-color: #f3b596;
+    background-color: #b82d0b;
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
