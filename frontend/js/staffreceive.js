@@ -44,9 +44,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             const rawData = await res.json();
             const list = Array.isArray(rawData) ? rawData : (rawData.data || []);
 
-            // กรองเฉพาะรายการที่ยัง "รอรับเรื่อง" (ยังไม่ถูกรับ)
+            // กรองเฉพาะรายการที่ยังไม่ได้รับเรื่อง (สถานะ PENDING หรือ รอรับเรื่อง)
             const pendingList = list.filter(item =>
-                !item.status || item.status === "รอรับเรื่อง" || item.status === "PENDING"
+                !item.status || item.status === "PENDING" || item.status === "รอรับเรื่อง"
             );
 
             loadingEl.style.display = "none";
@@ -86,27 +86,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     }
 
-    // ฟังก์ชันกดรับเรื่อง -> อัปเดตสถานะเป็น "รับเรื่องแล้ว" และบันทึกเวลาที่รับ
+    // แก้ไขให้เรียกใช้ PATCH /api/repair-requests/${id}/accept ตาม Backend ของโปรเจกต์
     window.acceptRequest = async function (id) {
         if (!confirm("ยืนยันการรับเรื่องรายการนี้ใช่หรือไม่?")) return;
 
-        const nowIso = new Date().toISOString();
-
         try {
-            // เรียก API อัปเดตสถานะ (รองรับทั้ง PUT /api/repair-requests/{id}/accept หรือ PATCH/PUT ทั่วไป)
-            const res = await fetch(`/api/repair-requests/${id}`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                credentials: "same-origin",
-                body: JSON.stringify({
-                    status: "รับเรื่องแล้ว",
-                    acceptedAt: nowIso
-                })
+            const res = await fetch(`/api/repair-requests/${id}/accept`, {
+                method: "PATCH",
+                credentials: "same-origin"
             });
 
-            if (!res.ok) throw new Error(`อัปเดตไม่สำเร็จ (HTTP ${res.status})`);
+            if (!res.ok) {
+                const errData = await res.json().catch(() => null);
+                throw new Error(errData?.message || `HTTP ${res.status}`);
+            }
 
-            // ลบการ์ดออกจากหน้ารับเรื่องทันที (รายการจะย้ายไปอยู่หน้าประวัติ)
+            alert("รับเรื่องแจ้งซ่อมเรียบร้อยแล้ว");
+
+            // ลบการ์ดออกจากหน้ารับเรื่องทันที
             const cardEl = document.getElementById(`req-card-${id}`);
             if (cardEl) cardEl.remove();
 

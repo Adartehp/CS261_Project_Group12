@@ -31,6 +31,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     const historyLoading = document.getElementById('history-loading');
     const historyContainer = document.getElementById('history-container');
 
+    // ฟังก์ชันสำหรับแสดงผลเมื่อไม่มีข้อมูล
+    function showNoData() {
+        latestLoading.style.display = 'none';
+        historyLoading.style.display = 'none';
+        latestContent.style.display = 'block';
+        historyContainer.style.display = 'block';
+
+        latestContent.innerHTML = '<p class="text-center text-gray-500 py-4 font-medium">ไม่มีข้อมูล</p>';
+        historyContainer.innerHTML = '<p class="text-center text-gray-500 py-4 font-medium">ไม่มีข้อมูล</p>';
+    }
+
+    function formatDateTime(isoString) {
+        if (!isoString) return '-';
+        const d = new Date(isoString);
+        if (isNaN(d.getTime())) return isoString;
+        return d.toLocaleString('th-TH', {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        }) + ' น.';
+    }
+
     try {
         const response = await fetch('/api/repair-requests', {
             method: 'GET',
@@ -38,26 +59,32 @@ document.addEventListener('DOMContentLoaded', async () => {
             credentials: 'same-origin'
         });
 
+        // หากติด 403 หรือ 404 ให้แสดงว่าไม่มีข้อมูล
+        if (response.status === 403 || response.status === 404) {
+            showNoData();
+            return;
+        }
+
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
         const rawData = await response.json();
         const allRequests = Array.isArray(rawData) ? rawData : (rawData.data || rawData.content || []);
 
-        // กรองซ้ำฝั่ง Frontend เฉพาะรายการที่ studentId ตรงกับรหัสนักศึกษาที่ล็อกอิน
+        // กรองเฉพาะรายการที่ studentId ตรงกับรหัสนักศึกษาที่ล็อกอิน
         const myRequests = allRequests.filter(item => String(item.studentId) === String(currentUser.username));
+
+        // ถ้าไม่มีข้อมูลของนักศึกษาคนนี้ ให้ขึ้นว่า "ไม่มีข้อมูล"
+        if (myRequests.length === 0) {
+            showNoData();
+            return;
+        }
 
         latestLoading.style.display = 'none';
         historyLoading.style.display = 'none';
         latestContent.style.display = 'block';
         historyContainer.style.display = 'block';
 
-        if (myRequests.length === 0) {
-            latestContent.innerHTML = '<p class="text-center text-gray-500 py-2">ยังไม่มีรายการแจ้งซ่อมของคุณ</p>';
-            historyContainer.innerHTML = '<p class="text-center text-gray-500 py-2">ยังไม่มีประวัติการแจ้งซ่อม</p>';
-            return;
-        }
-
-        // รายการล่าสุด (ตัวแรกหรือตัวล่าสุดตามการเรียงของ API)
+        // แสดงรายการล่าสุดในกล่อง "สถานะ"
         const latest = myRequests[0];
         const rawDate = latest.createdAt || latest.created_at || '';
         const datePart = rawDate.includes('T') ? rawDate.split('T')[0] : (rawDate.split(' ')[0] || '-');
@@ -69,7 +96,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('val-time').textContent = timePart;
         document.getElementById('val-repairItem').textContent = latest.repairItem || '-';
 
-        // อัปเดต Progress Bar ให้ตรงกับสถานะจริงในระบบ ("รอรับเรื่อง" / "รับเรื่องแล้ว" / "เสร็จสิ้น")
+        // อัปเดต Progress Bar
         const statusText = latest.status || 'รอรับเรื่อง';
         const step1 = document.getElementById('step-1');
         const step2 = document.getElementById('step-2');
@@ -90,14 +117,21 @@ document.addEventListener('DOMContentLoaded', async () => {
             step3.className = 'w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold shadow';
         }
 
-        // แสดงการ์ดประวัติทั้งหมดเฉพาะของนักศึกษาคนนี้
+        // แสดงการ์ดประวัติทั้งหมดของนักศึกษาคนนี้
         historyContainer.innerHTML = '';
         myRequests.forEach(item => {
             const itemArea = areaMap[item.area] || item.area || '-';
-            const itemDate = (item.createdAt || item.created_at || '').split('T')[0] || '-';
+            const createdTime = formatDateTime(item.createdAt);
+            const acceptedTime = (item.status && item.status !== 'รอรับเรื่อง' && item.status !== 'PENDING')
+                ? formatDateTime(item.acceptedAt || item.updatedAt)
+                : 'ยังไม่รับเรื่อง';
+
+            const displayStatus = item.status === 'PENDING' ? 'รอรับเรื่อง' 
+                                : item.status === 'IN_PROGRESS' ? 'รับเรื่องแล้ว' 
+                                : (item.status || 'รอรับเรื่อง');
 
             const card = document.createElement('div');
-            card.className = 'bg-white p-4 rounded-xl border border-[#c4ddf5] shadow-sm space-y-1';
+            card.className = 'bg-white p-4 rounded-xl border border-[#c4ddf5] shadow-sm space-y-1.5';
             card.innerHTML = `
                 <div class="flex justify-between text-sm text-gray-700">
                     <span>รหัสห้องพัก : <strong>${item.roomNumber || '-'}</strong></span>
@@ -105,53 +139,17 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
                 <div class="text-sm text-gray-700">พื้นที่ : <strong>${itemArea}</strong> | รายการซ่อม : <strong>${item.repairItem || '-'}</strong></div>
                 <div class="text-xs text-gray-500">รายละเอียด : ${item.description || '-'}</div>
-                <div class="text-sm text-gray-600 pt-1">วันที่ : ${itemDate} | สถานะ : <span class="text-[#d63b15] font-semibold">${item.status || 'รอรับเรื่อง'}</span></div>
+                <div class="text-xs text-gray-600 pt-1 border-t border-gray-100 space-y-0.5">
+                    <div>แจ้งเมื่อ : <strong>${createdTime}</strong></div>
+                    <div>รับเรื่องเมื่อ : <strong>${acceptedTime}</strong></div>
+                </div>
+                <div class="text-sm text-gray-600 pt-1">สถานะ : <span class="text-[#d63b15] font-semibold">${displayStatus}</span></div>
             `;
             historyContainer.appendChild(card);
         });
 
     } catch (err) {
-        latestLoading.textContent = `ไม่สามารถโหลดข้อมูลสถานะได้ (${err.message})`;
-        historyLoading.textContent = `ไม่สามารถโหลดประวัติได้ (${err.message})`;
-        latestLoading.style.color = '#dc2626';
-        historyLoading.style.color = '#dc2626';
+        console.error('Fetch repair history error:', err);
+        showNoData();
     }
-
-    // เพิ่มฟังก์ชันจัดรูปแบบวันเวลาใน studenthistory.js
-function formatDateTime(isoString) {
-    if (!isoString) return "-";
-    const d = new Date(isoString);
-    if (isNaN(d.getTime())) return isoString;
-    return d.toLocaleString("th-TH", {
-        year: "numeric", month: "short", day: "numeric",
-        hour: "2-digit", minute: "2-digit"
-    }) + " น.";
-}
-
-// ในส่วนแสดงการ์ดประวัติ (myRequests.forEach) ให้แสดงเวลาแจ้งและเวลารับเรื่องเพิ่มเข้าไป:
-myRequests.forEach(item => {
-    const itemArea = areaMap[item.area] || item.area || '-';
-    const createdTime = formatDateTime(item.createdAt);
-    const acceptedTime = (item.status && item.status !== 'รอรับเรื่อง')
-        ? formatDateTime(item.acceptedAt || item.updatedAt)
-        : 'ยังไม่รับเรื่อง';
-
-    const card = document.createElement('div');
-    card.className = 'bg-white p-4 rounded-xl border border-[#c4ddf5] shadow-sm space-y-1.5';
-    card.innerHTML = `
-        <div class="flex justify-between text-sm text-gray-700">
-            <span>รหัสห้องพัก : <strong>${item.roomNumber || '-'}</strong></span>
-            <span class="text-xs text-gray-500">รหัสนศ. ${item.studentId}</span>
-        </div>
-        <div class="text-sm text-gray-700">พื้นที่ : <strong>${itemArea}</strong> | รายการซ่อม : <strong>${item.repairItem || '-'}</strong></div>
-        <div class="text-xs text-gray-500">รายละเอียด : ${item.description || '-'}</div>
-        <div class="text-xs text-gray-600 pt-1 border-t border-gray-100 space-y-0.5">
-            <div>แจ้งเมื่อ : <strong>${createdTime}</strong></div>
-            <div>รับเรื่องเมื่อ : <strong>${acceptedTime}</strong></div>
-        </div>
-        <div class="text-sm text-gray-600 pt-1">สถานะ : <span class="text-[#d63b15] font-semibold">${item.status || 'รอรับเรื่อง'}</span></div>
-    `;
-    historyContainer.appendChild(card);
-});
-
 });

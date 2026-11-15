@@ -18,14 +18,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     const modalDescription = document.querySelector('.modal-input-lg');
 
     let selectedRequestId = null;
-    let accepting = false;
 
     function statusText(status) {
         const labels = {
             PENDING: 'รอรับเรื่อง',
-            IN_PROGRESS: 'รับเรื่องแล้ว'
+            IN_PROGRESS: 'รับเรื่องแล้ว',
+            COMPLETED: 'เสร็จสิ้น'
         };
         return labels[status] ?? status;
+    }
+
+    function formatDateTime(isoString) {
+        if (!isoString) return '-';
+        const d = new Date(isoString);
+        if (isNaN(d.getTime())) return isoString;
+        return d.toLocaleString('th-TH', {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        }) + ' น.';
     }
 
     async function callApi(url, options = {}) {
@@ -40,7 +50,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     function closeModal() {
-        if (accepting) return;
         modalOverlay.classList.remove('active');
         selectedRequestId = null;
     }
@@ -57,6 +66,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             const request = await callApi(`/api/repair-requests/${id}`);
             if (selectedRequestId !== id) return;
 
+            const acceptedTime = request.acceptedAt || request.updatedAt;
+
             modalItem.textContent = request.repairItem;
             modalDescription.style.whiteSpace = 'pre-wrap';
             modalDescription.textContent = [
@@ -64,39 +75,46 @@ document.addEventListener('DOMContentLoaded', async () => {
                 `ห้อง: ${request.roomNumber}`,
                 `พื้นที่: ${request.area}`,
                 `รายละเอียด: ${request.description || '-'}`,
+                `แจ้งเมื่อ: ${formatDateTime(request.createdAt)}`,
+                `รับเรื่องเมื่อ: ${formatDateTime(acceptedTime)}`,
                 `สถานะ: ${statusText(request.status)}`
             ].join('\n');
 
-            submitBtn.disabled = request.status !== 'PENDING';
-            submitBtn.textContent = request.status === 'PENDING' ? 'รับเรื่อง' : statusText(request.status);
+            submitBtn.disabled = true;
+            submitBtn.textContent = statusText(request.status);
         } catch (error) {
             if (selectedRequestId !== id) return;
             modalItem.textContent = 'โหลดรายละเอียดไม่สำเร็จ';
             modalDescription.textContent = error.message;
-            submitBtn.textContent = 'รับเรื่อง';
             submitBtn.disabled = true;
         }
     }
 
-    async function loadRequests() {
+    async function loadHistoryRequests() {
         container.style.textAlign = 'center';
         container.style.padding = '30px';
         container.style.color = '#64748b';
-        container.textContent = 'กำลังโหลดข้อมูล...';
+        container.textContent = 'กำลังโหลดข้อมูลประวัติ...';
 
         try {
-            const requests = await callApi('/api/repair-requests');
+            const allRequests = await callApi('/api/repair-requests');
+            
+            // กรองเฉพาะรายการที่ "รับเรื่องแล้ว" (ตัดรายการ PENDING / รอรับเรื่อง ออก)
+            const acceptedRequests = (allRequests || []).filter(req => 
+                req.status && req.status !== 'PENDING' && req.status !== 'รอรับเรื่อง'
+            );
+
             container.replaceChildren();
 
-            if (!requests || requests.length === 0) {
-                container.textContent = 'ยังไม่มีรายการแจ้งซ่อม';
+            if (acceptedRequests.length === 0) {
+                container.textContent = 'ยังไม่มีประวัติการรับเรื่อง';
                 return;
             }
 
             container.style.textAlign = 'left';
             container.style.padding = '20px';
 
-            requests.forEach((request) => {
+            acceptedRequests.forEach((request) => {
                 const card = document.createElement('div');
                 card.className = 'card open-modal';
 
@@ -116,9 +134,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                     card.appendChild(row);
                 }
 
+                const acceptedTime = request.acceptedAt || request.updatedAt;
+
                 addRow('รหัสนักศึกษา :', request.studentId);
                 addRow('รหัสห้องพัก :', request.roomNumber);
                 addRow('รายการซ่อม :', request.repairItem);
+                addRow('แจ้งเมื่อ :', formatDateTime(request.createdAt));
+                addRow('รับเรื่องเมื่อ :', formatDateTime(acceptedTime));
                 addRow('สถานะ :', statusText(request.status));
 
                 card.addEventListener('click', () => openDetails(request.id));
@@ -129,27 +151,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
-    submitBtn.addEventListener('click', async () => {
-        if (selectedRequestId === null || accepting) return;
-        const id = selectedRequestId;
-        accepting = true;
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'กำลังรับเรื่อง...';
-
-        try {
-            await callApi(`/api/repair-requests/${id}/accept`, { method: 'PATCH' });
-            accepting = false;
-            closeModal();
-            alert('รับเรื่องแจ้งซ่อมเรียบร้อยแล้ว');
-            await loadRequests();
-        } catch (error) {
-            accepting = false;
-            alert(`รับเรื่องไม่สำเร็จ: ${error.message}`);
-            await openDetails(id);
-            await loadRequests();
-        }
-    });
-
     modalOverlay.addEventListener('click', (event) => {
         if (event.target === modalOverlay) closeModal();
     });
@@ -158,5 +159,5 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (event.key === 'Escape') closeModal();
     });
 
-    loadRequests();
+    loadHistoryRequests();
 });
