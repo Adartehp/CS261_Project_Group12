@@ -82,6 +82,7 @@ public class RepairRequest {
     public void updateStatus(String status, String staffNote) {
         this.status = status;
         this.staffNote = staffNote;
+        this.updatedAt = LocalDateTime.now();
 
         if ("DONE".equals(status)) {
             this.completedAt = LocalDateTime.now();

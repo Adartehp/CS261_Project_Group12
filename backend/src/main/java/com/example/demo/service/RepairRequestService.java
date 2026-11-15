@@ -143,6 +143,7 @@ public class RepairRequestService {
             UpdateRepairRequestStatus input) {
 
         RepairRequest request = getById(id);
+        String current = request.getStatus();
 
         if (input == null || input.status() == null) {
             throw new ResponseStatusException(
@@ -161,10 +162,13 @@ public class RepairRequestService {
             );
         }
 
-        if (!"IN_PROGRESS".equals(request.getStatus())) {
+        boolean ok =("DONE".equals(newStatus) && "IN_PROGRESS".equals(current))
+        || ("CANCELLED".equals(newStatus) && Set.of("PENDING", "IN_PROGRESS").contains(current));
+
+        if (!ok) {
             throw new ResponseStatusException(
                 HttpStatus.CONFLICT,
-                "สามารถเปลี่ยนสถานะได้เฉพาะรายการที่กำลังดำเนินการ"
+                "ไม่สามารถเปลี่ยนสถานะนี้ได้"
             );
         }
 
