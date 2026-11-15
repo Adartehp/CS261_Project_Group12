@@ -235,3 +235,39 @@ body {
     background-color: #b82d0b;
 }
 
+/* คลาสสำหรับหน้าประวัติโดยเฉพาะ ไม่จัดกึ่งกลางแนวตั้ง */
+.main-container-history {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    max-width: 720px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+/* ปุ่มออกจากระบบ */
+.logout-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    width: auto !important;
+    height: auto !important;
+    flex: 0 0 auto;
+
+    padding: 8px 14px;
+    background-color: transparent;
+    color: #ffffff;
+
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+
+    cursor: pointer;
+}
