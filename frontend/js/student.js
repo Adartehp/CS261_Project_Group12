@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // 1. ตั้งค่าปุ่มออกจากระบบ
     const logoutBtn = document.getElementById('logoutBtn');
-    if (logoutBtn) {
+    if () {
         logoutBtn.addEventListener('click', () => {
             if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
                 logout();
