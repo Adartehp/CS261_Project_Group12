@@ -223,32 +223,7 @@ public class RepairRequestService {
     @Transactional
     public RepairRequest update(Long id, UpdateRepairRequest input,String currentStudentId) {
 
-        // 1. ค้นหาคำร้อง
-        RepairRequest request = repository.findById(id)
-                    .orElseThrow(() ->
-                            new ResponseStatusException(
-                                    HttpStatus.NOT_FOUND,
-                                    "ไม่พบรายการแจ้งซ่อม"
-                            )
-                    );
-
-        // 2. ตรวจสอบเจ้าของคำร้อง
-        if (!request.getStudentId().equals(currentStudentId)) {
-            throw new ResponseStatusException(
-                    HttpStatus.FORBIDDEN,
-                    "ไม่มีสิทธิ์แก้ไขรายการแจ้งซ่อมนี้"
-            );
-        }
-
-        // 3. ตรวจสอบสถานะ
-        if (!"PENDING".equals(request.getStatus())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "ไม่สามารถแก้ไขรายการที่รับเรื่องแล้ว"
-            );
-        }
-
-        // 4. ตรวจสอบข้อมูลเหมือนตอน POST
+        // 1. ตรวจสอบข้อมูลเหมือนตอน POST
         String roomNumber = required(
                 input.roomNumber(), 20, "ห้อง"
         );
@@ -279,16 +254,37 @@ public class RepairRequestService {
             );
         }
 
-        // 5. แก้ไขข้อมูล
-        request.updateDetails(
+        // 2. แก้ไขด้วย UPDATE เดียวที่เช็ค id + เจ้าของ + PENDING พร้อมกัน
+        //    ถ้าเจ้าหน้าที่รับเรื่องไปก่อน จะไม่มีแถวถูกแก้
+        //    (ห้ามใช้ findById แล้ว save เพราะจะเขียน status เก่าทับการรับเรื่อง)
+        int updatedRows = repository.updatePendingDetails(
+                id,
+                currentStudentId,
                 roomNumber,
                 area,
                 repairItem,
-                description
+                description,
+                LocalDateTime.now()
         );
 
-        // 6. บันทึก
-        return repository.save(request);
+        if (updatedRows == 0) {
+            // 3. ไม่มีแถวถูกแก้ อ่านใหม่เพื่อตอบ error ให้ถูก
+            RepairRequest request = getById(id); // ไม่พบ -> 404
+
+            if (!request.getStudentId().equals(currentStudentId)) {
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
+                        "ไม่มีสิทธิ์แก้ไขรายการแจ้งซ่อมนี้"
+                );
+            }
+
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "ไม่สามารถแก้ไขรายการที่รับเรื่องแล้ว"
+            );
+        }
+
+        return getById(id);
     }
 
     @Transactional(readOnly = true)
