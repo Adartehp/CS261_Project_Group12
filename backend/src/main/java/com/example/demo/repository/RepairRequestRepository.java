@@ -45,6 +45,33 @@ public interface RepairRequestRepository
             @Param("id") Long id,
             @Param("now") LocalDateTime now
     );
+
+    // US4: แก้ไขได้เฉพาะเจ้าของและยังเป็น PENDING ใน UPDATE เดียว
+    // ไม่แตะ status / accepted_at จึงไม่เขียนทับการรับเรื่องของเจ้าหน้าที่
+    @Modifying(
+        clearAutomatically = true,
+        flushAutomatically = true
+    )
+    @Query("""
+        update RepairRequest r
+        set r.roomNumber = :roomNumber,
+            r.area = :area,
+            r.repairItem = :repairItem,
+            r.description = :description,
+            r.updatedAt = :now
+        where r.id = :id
+          and r.studentId = :studentId
+          and r.status = 'PENDING'
+        """)
+    int updatePendingDetails(
+            @Param("id") Long id,
+            @Param("studentId") String studentId,
+            @Param("roomNumber") String roomNumber,
+            @Param("area") String area,
+            @Param("repairItem") String repairItem,
+            @Param("description") String description,
+            @Param("now") LocalDateTime now
+    );
     @Query("""
         select r from RepairRequest r
         where (:status is null or r.status = :status)
