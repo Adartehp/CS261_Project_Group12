@@ -82,3 +82,18 @@ async function logout() {
         window.location.href = "index.html";
     }
 }
+
+/**
+ * แปลงอักขระพิเศษของ HTML ก่อนนำข้อความที่ผู้ใช้กรอกไปใส่ใน innerHTML
+ * เพื่อไม่ให้แท็กหรือสคริปต์ที่แฝงมาในข้อความทำงานบนหน้าเว็บ (ป้องกัน XSS)
+ * @param {*} value
+ * @returns {string}
+ */
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
