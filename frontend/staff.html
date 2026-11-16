@@ -5,94 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ดูประวัติการแจ้งซ่อม</title>
     <link rel="stylesheet" href="css/staff.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-[#f4f9ff] min-h-screen flex flex-col">
 
-    <header class="navbar">
-        <div class="menu-icon" id="menuBtn">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        <div class="profile-icon" id="profileBtn">
-            <svg viewBox="0 0 24 24" width="100%" height="100%">
-                <path fill="#888" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-            </svg>
-        </div>
+    <header class="navbar" style="display: flex; justify-content: space-between; align-items: center;">
+        <a href="staffselect.html" class="back-btn" style="color: white; text-decoration: none; font-size: 16px; font-weight: 500; display: flex; align-items: center; gap: 8px; border: none;">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>ย้อนกลับ</span>
+        </a>
+
+        <button type="button" id="logoutBtn" class="logout-btn" title="ออกจากระบบ">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>ออกจากระบบ</span>
+        </button>
     </header>
 
-    <main class="container">
-        <h1 class="page-title">ประวัติ</h1>
-
-        <div class="main-scroll-container" id="notificationContainer">
-
-            <div class="card open-modal">
-                <div class="info-row">
-                    <span class="label">รหัสนักศึกษา :</span>
-                    <div class="skeleton-bar"></div>
-                </div>
-                <div class="info-row">
-                    <span class="label">รหัสห้องพัก :</span>
-                    <div class="skeleton-bar"></div>
-                </div>
-                <div class="info-row">
-                    <span class="label">รายการซ่อม :</span>
-                    <div class="skeleton-bar"></div>
-                </div>
-            </div>
-
-            <div class="card open-modal">
-                <div class="info-row">
-                    <span class="label">รหัสนักศึกษา :</span>
-                    <div class="skeleton-bar"></div>
-                </div>
-                <div class="info-row">
-                    <span class="label">รหัสห้องพัก :</span>
-                    <div class="skeleton-bar"></div>
-                </div>
-                <div class="info-row">
-                    <span class="label">รายการซ่อม :</span>
-                    <div class="skeleton-bar"></div>
-                </div>
-            </div>
-
-            <div class="card open-modal">
-                <div class="info-row">
-                    <span class="label">รหัสนักศึกษา :</span>
-                    <div class="skeleton-bar"></div>
-                </div>
-                <div class="info-row">
-                    <span class="label">รหัสห้องพัก :</span>
-                    <div class="skeleton-bar"></div>
-                </div>
-                <div class="info-row">
-                    <span class="label">รายการซ่อม :</span>
-                    <div class="skeleton-bar"></div>
-                </div>
-            </div>
-
-            <div class="card open-modal">
-                <div class="info-row">
-                    <span class="label">รหัสนักศึกษา :</span>
-                    <div class="skeleton-bar"></div>
-                </div>
-                <div class="info-row">
-                    <span class="label">รหัสห้องพัก :</span>
-                    <div class="skeleton-bar"></div> 
-                </div>
-                <div class="info-row">
-                    <span class="label">รายการซ่อม :</span>
-                    <div class="skeleton-bar"></div>
-                </div>
-            </div>
-
-        </div>
+    <main class="max-w-[720px] w-full mx-auto p-6 flex-1">
+        <h1 class="page-title text-2xl font-bold text-center mb-5 text-[#111]">ประวัติ</h1>
+        
+        <!-- นำกรอบการ์ดชั้นนอกออก ให้รายการเรียงต่อกันและเลื่อนดูได้เลย -->
+        <div id="notificationContainer" class="space-y-4 pb-8"></div>
     </main>
-
-    <footer class="footer-bar">
-       
-        <button class="back-btn" id="backBtn" onclick="history.back()">ย้อนกลับ</button>
-    </footer>
 
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-box">
@@ -105,11 +40,12 @@
                 <div class="modal-input-lg"></div>
             </div>
             <div class="modal-btn-container">
-                <button class="submit-btn" id="submitBtn">รับเรื่อง</button>
+                <button class="submit-btn" id="submitBtn">ปิด</button>
             </div>
         </div>
     </div>
 
+    <script src="js/auth.js"></script>
     <script src="js/staff.js"></script>
 </body>
 </html>

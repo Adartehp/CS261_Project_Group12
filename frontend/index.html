@@ -2,32 +2,50 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
- 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Login Selection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแจ้งซ่อมหอพัก - เลือกผู้ใช้งาน</title>
     <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
- 
-    <header class="navbar">
-        <div class="menu-icon" id="menuToggle">
-            <span></span>
-            <span></span>
-            <span></span>
+    <header class="top-bar">
+        <div class="brand-title">
+            <i class="fa-solid fa-hotel"></i>
+            <span id="brandTitle">ระบบแจ้งซ่อมหอพัก</span>
         </div>
     </header>
 
-  
-    <main class="container">
-        <div class="button-group">
-            <a href="student.html" class="role-btn">นักศึกษา</a>
-            <a href="staff.html" class="role-btn">เจ้าหน้าที่</a>
+    <main class="main-container">
+        <div class="login-card role-card">
+            <h1 class="card-title" id="pageTitle">เลือกผู้ใช้งาน</h1>
+
+            <div class="role-group">
+                <a href="studentlogin.html" class="role-card-btn" id="studentRoleBtn">
+                    <div class="role-icon-wrapper student-icon">
+                        <i class="fa-solid fa-user-graduate"></i>
+                    </div>
+                    <div class="role-text-wrapper">
+                        <span class="role-title" id="studentTitle">นักศึกษา</span>
+                        <span class="role-desc" id="studentDesc">เข้าสู่ระบบสำหรับนักศึกษาผู้พักอาศัย</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right role-arrow"></i>
+                </a>
+
+                <a href="stafflogin.html" class="role-card-btn" id="staffRoleBtn">
+                    <div class="role-icon-wrapper staff-icon">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <div class="role-text-wrapper">
+                        <span class="role-title" id="staffTitle">เจ้าหน้าที่</span>
+                        <span class="role-desc" id="staffDesc">เข้าสู่ระบบสำหรับเจ้าหน้าที่หอพัก</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right role-arrow"></i>
+                </a>
+            </div>
         </div>
     </main>
 
-  
-    <footer class="footer-bar"></footer>
-
+    <script src="js/index.js"></script>
 </body>
 </html>

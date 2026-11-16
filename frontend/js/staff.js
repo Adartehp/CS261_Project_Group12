@@ -1,196 +1,145 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    const currentUser = await requireAuth('STAFF');
+    if (!currentUser) return;
+
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
+                logout();
+            }
+        });
+    }
+
     const container = document.getElementById('notificationContainer');
     const modalOverlay = document.getElementById('modalOverlay');
     const submitBtn = document.getElementById('submitBtn');
-    const backBtn = document.getElementById('backBtn');
-
     const modalItem = document.querySelector('.modal-input-sm');
     const modalDescription = document.querySelector('.modal-input-lg');
 
-    let selectedRequestId = null;
-    let accepting = false;
+    const areaMap = {
+        bedroom: 'ห้องนอน',
+        restroom: 'ห้องนั่งเล่น (เฉพาะโซน B)',
+        centerpoint: 'พื้นที่ส่วนกลาง',
+        bathroom: 'ห้องน้ำ',
+        balcony: 'ระเบียง+ลานซักผ้า',
+        key: 'รายการกุญแจ',
+        air: 'เครื่องปรับอากาศ (แอร์)'
+    };
 
     function statusText(status) {
-        const labels = {
-            PENDING: 'รอรับเรื่อง',
-            IN_PROGRESS: 'รับเรื่องแล้ว'
-        };
+        if (!status || status === 'PENDING') return 'รอรับเรื่อง';
+        if (status === 'IN_PROGRESS') return 'รับเรื่องแล้ว';
+        if (status === 'COMPLETED' || status === 'DONE') return 'เสร็จสิ้น';
+        return status;
+    }
 
-        return labels[status] ?? status;
+    function formatDateTime(isoString) {
+        if (!isoString) return '-';
+        const d = new Date(isoString);
+        if (isNaN(d.getTime())) return isoString;
+        return d.toLocaleString('th-TH', {
+            year: 'numeric', month: 'short', day: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        }) + ' น.';
     }
 
     async function callApi(url, options = {}) {
+        options.credentials = 'same-origin';
         const response = await fetch(url, options);
         const data = await response.json().catch(() => null);
 
         if (!response.ok) {
-            throw new Error(
-                data?.message || `ดำเนินการไม่สำเร็จ (${response.status})`
-            );
+            throw new Error(data?.message || `ดำเนินการไม่สำเร็จ (${response.status})`);
         }
-
-        if (data === null) {
-            throw new Error('รูปแบบคำตอบจากเซิร์ฟเวอร์ไม่ถูกต้อง');
-        }
-
         return data;
     }
 
     function closeModal() {
-        if (accepting) return;
-
         modalOverlay.classList.remove('active');
-        selectedRequestId = null;
     }
 
     async function openDetails(id) {
-        selectedRequestId = id;
         modalItem.textContent = 'กำลังโหลด...';
         modalDescription.textContent = '';
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'กำลังโหลด...';
+        submitBtn.textContent = 'ปิด';
+        submitBtn.onclick = closeModal;
         modalOverlay.classList.add('active');
 
         try {
-            const request = await callApi(
-                `/api/repair-requests/${id}`
-            );
+            const request = await callApi(`/api/repair-requests/${id}`);
+            const acceptedTime = request.acceptedAt || request.updatedAt;
+            const areaThai = areaMap[request.area] || request.area || '-';
 
-            if (selectedRequestId !== id) return;
-
-            modalItem.textContent = request.repairItem;
-
+            modalItem.textContent = request.repairItem || '-';
             modalDescription.style.whiteSpace = 'pre-wrap';
             modalDescription.textContent = [
-                `รหัสนักศึกษา: ${request.studentId}`,
-                `ห้อง: ${request.roomNumber}`,
-                `พื้นที่: ${request.area}`,
-                `รายละเอียด: ${request.description || '-'}`,
-                `สถานะ: ${statusText(request.status)}`
+                `รหัสนักศึกษา : ${request.studentId || '-'}`,
+                `ห้อง : ${request.roomNumber || '-'}`,
+                `พื้นที่ : ${areaThai}`,
+                `รายละเอียด : ${request.description || '-'}`,
+                `แจ้งเมื่อ : ${formatDateTime(request.createdAt)}`,
+                `รับเรื่องเมื่อ : ${formatDateTime(acceptedTime)}`,
+                `สถานะ : ${statusText(request.status)}`
             ].join('\n');
-
-            submitBtn.disabled = request.status !== 'PENDING';
-            submitBtn.textContent =
-                request.status === 'PENDING'
-                    ? 'รับเรื่อง'
-                    : statusText(request.status);
         } catch (error) {
-            if (selectedRequestId !== id) return;
-
             modalItem.textContent = 'โหลดรายละเอียดไม่สำเร็จ';
             modalDescription.textContent = error.message;
-            submitBtn.textContent = 'รับเรื่อง';
-            submitBtn.disabled = true;
         }
     }
 
-    async function loadRequests() {
-        container.textContent = 'กำลังโหลดข้อมูล...';
+    async function loadHistoryRequests() {
+        container.innerHTML = '<p class="text-center text-gray-500 py-6">กำลังโหลดข้อมูลประวัติ...</p>';
 
         try {
-            const requests = await callApi('/api/repair-requests');
+            const allRequests = await callApi('/api/repair-requests');
 
-            container.replaceChildren();
+            // กรองเฉพาะรายการที่รับเรื่องแล้ว
+            const acceptedRequests = (allRequests || []).filter(req =>
+                req.status && req.status !== 'PENDING' && req.status !== 'รอรับเรื่อง'
+            );
 
-            if (requests.length === 0) {
-                container.textContent = 'ยังไม่มีรายการแจ้งซ่อม';
+            container.innerHTML = '';
+
+            if (acceptedRequests.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-500 py-6 font-medium">ไม่มีข้อมูล</p>';
                 return;
             }
 
-            requests.forEach((request) => {
-                const card = document.createElement('div');
-                card.className = 'card open-modal';
-                card.style.cursor = 'pointer';
-                card.tabIndex = 0;
-                card.setAttribute('role', 'button');
-                card.setAttribute(
-                    'aria-label',
-                    `ดูรายละเอียดแจ้งซ่อมหมายเลข ${request.id}`
-                );
+            acceptedRequests.forEach((request) => {
+                const acceptedTime = request.acceptedAt || request.updatedAt;
+                const areaThai = areaMap[request.area] || request.area || '-';
 
-                function addRow(labelText, value) {
-                    const row = document.createElement('div');
-                    row.className = 'info-row';
+                const itemEl = document.createElement('div');
+                itemEl.className = 'bg-white p-5 rounded-xl border border-[#c4ddf5] shadow-sm space-y-2 cursor-pointer hover:border-[#d63b15] transition';
+                itemEl.innerHTML = `
+                    <div class="flex justify-between text-sm text-gray-700">
+                        <span>รหัสนักศึกษา : <strong>${request.studentId || '-'}</strong></span>
+                        <span>รหัสห้องพัก : <strong>${request.roomNumber || '-'}</strong></span>
+                    </div>
+                    <div class="text-sm text-gray-800">พื้นที่ : <strong>${areaThai}</strong> | รายการซ่อม : <strong>${request.repairItem || '-'}</strong></div>
+                    <div class="text-xs text-gray-600 pt-1 border-t border-gray-100 space-y-1">
+                        <div>แจ้งเมื่อ : <strong>${formatDateTime(request.createdAt)}</strong></div>
+                        <div>รับเรื่องเมื่อ : <strong>${formatDateTime(acceptedTime)}</strong></div>
+                    </div>
+                    <div class="text-sm text-green-700 font-semibold pt-1">สถานะ : ${statusText(request.status)}</div>
+                `;
 
-                    const label = document.createElement('span');
-                    label.className = 'label';
-                    label.textContent = labelText;
-
-                    const content = document.createElement('div');
-                    content.textContent = value ?? '-';
-                    content.style.overflowWrap = 'anywhere';
-
-                    row.append(label, content);
-                    card.appendChild(row);
-                }
-
-                addRow('รหัสนักศึกษา :', request.studentId);
-                addRow('รหัสห้องพัก :', request.roomNumber);
-                addRow('รายการซ่อม :', request.repairItem);
-                addRow('สถานะ :', statusText(request.status));
-
-                card.addEventListener('click', () => {
-                    openDetails(request.id);
-                });
-
-                card.addEventListener('keydown', (event) => {
-                    if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault();
-                        openDetails(request.id);
-                    }
-                });
-
-                container.appendChild(card);
+                itemEl.addEventListener('click', () => openDetails(request.id));
+                container.appendChild(itemEl);
             });
         } catch (error) {
-            container.textContent =
-                `โหลดรายการไม่สำเร็จ: ${error.message}`;
+            container.innerHTML = '<p class="text-center text-gray-500 py-6 font-medium">ไม่มีข้อมูล</p>';
         }
     }
 
-    submitBtn.addEventListener('click', async () => {
-        if (selectedRequestId === null || accepting) return;
-
-        const id = selectedRequestId;
-        accepting = true;
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'กำลังรับเรื่อง...';
-
-        try {
-            await callApi(`/api/repair-requests/${id}/accept`, {
-                method: 'PATCH'
-            });
-        } catch (error) {
-            accepting = false;
-            alert(`รับเรื่องไม่สำเร็จ: ${error.message}`);
-
-            await openDetails(id);
-            await loadRequests();
-            return;
-        }
-
-        accepting = false;
-        closeModal();
-        alert('รับเรื่องแจ้งซ่อมเรียบร้อยแล้ว');
-
-        await loadRequests();
-    });
-
     modalOverlay.addEventListener('click', (event) => {
-        if (event.target === modalOverlay) {
-            closeModal();
-        }
+        if (event.target === modalOverlay) closeModal();
     });
 
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape') {
-            closeModal();
-        }
+        if (event.key === 'Escape') closeModal();
     });
 
-    backBtn.addEventListener('click', () => {
-        window.location.href = 'index.html';
-    });
-
-    loadRequests();
+    loadHistoryRequests();
 });

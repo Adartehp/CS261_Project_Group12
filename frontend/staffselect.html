@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เมนูเจ้าหน้าที่</title>
+    <link rel="stylesheet" href="css/studentselect.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <header class="top-bar">
+        <div class="user-info">
+            <i class="fa-solid fa-user-shield"></i>
+            <span id="userNameDisplay">กำลังโหลด...</span>
+        </div>
+        <div class="header-actions">
+            <button type="button" id="logoutBtn" class="logout-btn" title="ออกจากระบบ">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>ออกจากระบบ</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="menu-box-container">
+            <button type="button" class="menu-btn" id="receiveMenuBtn">
+                <i class="fa-solid fa-inbox" style="margin-right: 10px;"></i><span>รับเรื่อง</span>
+            </button>
+
+            <button type="button" class="menu-btn" id="staffHistoryMenuBtn">
+                <i class="fa-solid fa-clock-rotate-left" style="margin-right: 10px;"></i><span>ประวัติ</span>
+            </button>
+        </div>
+    </main>
+
+    <script src="js/auth.js"></script>
+    <script src="js/staffselect.js"></script>
+</body>
+</html>

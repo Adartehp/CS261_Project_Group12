@@ -1,105 +1,119 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const menuHomeBtn = document.getElementById('menuHomeBtn');
-    const backBtn = document.getElementById('backBtn');
-    const repairForm = document.getElementById('repairForm');
+document.addEventListener('DOMContentLoaded', async () => {
+    const currentUser = await requireAuth('STUDENT');
+    if (!currentUser) return;
 
-    const detailsTextarea = document.getElementById('details');
-    const currentCountSpan = document.getElementById('currentCount');
-    const submitBtn = document.getElementById('submitBtn');
+    // 1. ตั้งค่าปุ่มออกจากระบบ
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            if (confirm('คุณต้องการออกจากระบบหรือไม่?')) {
+                logout();
+            }
+        });
+    }
 
+    // 2. แสดงรหัสนักศึกษาอัตโนมัติในช่องรหัสนักศึกษา
+    const studentIdInput = document.getElementById('studentId');
+    if (studentIdInput && currentUser.username) {
+        studentIdInput.value = currentUser.username;
+        studentIdInput.readOnly = true;
+    }
+
+    // 3. นับจำนวนตัวอักษรในช่องรายละเอียด (สูงสุด 150 ตัวอักษร)
+    const detailsInput = document.getElementById('details');
+    const currentCount = document.getElementById('currentCount');
+    if (detailsInput && currentCount) {
+        detailsInput.addEventListener('input', () => {
+            currentCount.textContent = detailsInput.value.length;
+        });
+    }
+
+    // 4. จัดการหน้าต่างแจ้งเตือน (Modal) สำเร็จ / ไม่สำเร็จ
     const modalOverlay = document.getElementById('modalOverlay');
     const successModal = document.getElementById('successModal');
     const errorModal = document.getElementById('errorModal');
     const errorMessage = document.getElementById('errorMessage');
-
     const closeSuccessBtn = document.getElementById('closeSuccessBtn');
     const closeErrorBtn = document.getElementById('closeErrorBtn');
 
-    function goToHomePage() {
-        window.location.href = 'index.html';
-    }
-
-    menuHomeBtn.addEventListener('click', goToHomePage);
-    backBtn.addEventListener('click', goToHomePage);
-
-    repairForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-    });
-
-    detailsTextarea.addEventListener('input', () => {
-        currentCountSpan.textContent = detailsTextarea.value.length;
-    });
-
-    function showModal(type, message = '') {
+    function showSuccess() {
+        modalOverlay.style.display = 'flex';
         modalOverlay.classList.add('active');
-
-        successModal.style.display =
-            type === 'success' ? 'flex' : 'none';
-
-        errorModal.style.display =
-            type === 'error' ? 'flex' : 'none';
-
-        errorMessage.textContent = message;
+        successModal.style.display = 'block';
+        errorModal.style.display = 'none';
     }
 
-    function hideModal() {
+    function showError(msg) {
+        modalOverlay.style.display = 'flex';
+        modalOverlay.classList.add('active');
+        errorModal.style.display = 'block';
+        successModal.style.display = 'none';
+        if (errorMessage) errorMessage.textContent = msg;
+    }
+
+    function closeModals() {
+        modalOverlay.style.display = 'none';
         modalOverlay.classList.remove('active');
         successModal.style.display = 'none';
         errorModal.style.display = 'none';
     }
 
-    submitBtn.addEventListener('click', async () => {
-        const requestData = {
-            studentId: document.getElementById('studentId').value.trim(),
-            roomNumber: document.getElementById('room').value.trim(),
-            area: document.getElementById('area').value,
-            repairItem: document.getElementById('repairItem').value,
-            description: detailsTextarea.value.trim()
-        };
+    if (closeSuccessBtn) {
+        closeSuccessBtn.addEventListener('click', () => {
+            closeModals();
+            window.location.href = 'studentselect.html';
+        });
+    }
 
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'กำลังส่ง...';
+    if (closeErrorBtn) {
+        closeErrorBtn.addEventListener('click', closeModals);
+    }
 
-        try {
-            const response = await fetch('/api/repair-requests', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(requestData)
-            });
+    // 5. จัดการปุ่มกดส่งแจ้งซ่อมเข้า Backend -> MySQL
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) {
+        submitBtn.addEventListener('click', async () => {
+            const studentId = document.getElementById('studentId').value.trim();
+            const roomNumber = document.getElementById('room').value.trim();
+            const area = document.getElementById('area').value;
+            const repairItem = document.getElementById('repairItem').value;
+            const description = document.getElementById('details').value.trim();
 
-            if (response.status === 201) {
-                showModal('success');
-            } else {
-                const errorData = await response.json().catch(() => ({}));
-
-                showModal(
-                    'error',
-                    errorData.message ||
-                    'ส่งข้อมูลไม่สำเร็จ กรุณาตรวจสอบข้อมูลแล้วลองใหม่'
-                );
+            if (!roomNumber || !area || !repairItem) {
+                showError('กรุณากรอกรหัสห้องพัก เลือกพื้นที่ และเลือกรายการซ่อมให้ครบถ้วน');
+                return;
             }
-        } catch (error) {
-            showModal(
-                'error',
-                'เชื่อมต่อเซิร์ฟเวอร์ไม่ได้ กรุณาตรวจสอบว่า Spring Boot กำลังทำงาน'
-            );
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'แจ้งซ่อม';
-        }
-    });
 
-    closeSuccessBtn.addEventListener('click', goToHomePage);
-    closeErrorBtn.addEventListener('click', hideModal);
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'กำลังส่งข้อมูล...';
 
-    modalOverlay.addEventListener('click', (event) => {
-        if (
-            event.target === modalOverlay &&
-            errorModal.style.display === 'flex'
-        ) {
-            hideModal();
-        }
-    });
+            try {
+                const response = await fetch('/api/repair-requests', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        studentId,
+                        roomNumber,
+                        area,
+                        repairItem,
+                        description
+                    })
+                });
+
+                const data = await response.json().catch(() => null);
+
+                if (!response.ok) {
+                    throw new Error(data?.message || `บันทึกไม่สำเร็จ (รหัสข้อผิดพลาด ${response.status})`);
+                }
+
+                showSuccess();
+            } catch (err) {
+                showError(err.message || 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'แจ้งซ่อม';
+            }
+        });
+    }
 });
