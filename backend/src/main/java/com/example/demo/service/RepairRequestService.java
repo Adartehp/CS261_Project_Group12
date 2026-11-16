@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.RepairRequest;
 import com.example.demo.dto.CreateRepairRequest;
+import com.example.demo.dto.UpdateRepairRequest;
 import com.example.demo.repository.RepairRequestRepository;
 import com.example.demo.dto.UpdateRepairRequestStatus;
 
@@ -218,6 +219,77 @@ public class RepairRequestService {
         return repository.save(request);
     }
 
+
+    @Transactional
+    public RepairRequest update(Long id, UpdateRepairRequest input,String currentStudentId) {
+
+        // 1. ค้นหาคำร้อง
+        RepairRequest request = repository.findById(id)
+                    .orElseThrow(() ->
+                            new ResponseStatusException(
+                                    HttpStatus.NOT_FOUND,
+                                    "ไม่พบรายการแจ้งซ่อม"
+                            )
+                    );
+
+        // 2. ตรวจสอบเจ้าของคำร้อง
+        if (!request.getStudentId().equals(currentStudentId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "ไม่มีสิทธิ์แก้ไขรายการแจ้งซ่อมนี้"
+            );
+        }
+
+        // 3. ตรวจสอบสถานะ
+        if (!"PENDING".equals(request.getStatus())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "ไม่สามารถแก้ไขรายการที่รับเรื่องแล้ว"
+            );
+        }
+
+        // 4. ตรวจสอบข้อมูลเหมือนตอน POST
+        String roomNumber = required(
+                input.roomNumber(), 20, "ห้อง"
+        );
+
+        String area = required(
+                input.area(), 30, "พื้นที่"
+        );
+
+        if (!ALLOWED_AREAS.contains(area)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "พื้นที่ที่เลือกไม่ถูกต้อง"
+            );
+        }
+
+        String repairItem = required(
+                input.repairItem(), 200, "รายการซ่อม"
+        );
+
+        String description = input.description() == null
+                ? ""
+                : input.description().strip();
+
+        if (description.length() > 150) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "รายละเอียดต้องไม่เกิน 150 ตัวอักษร"
+            );
+        }
+
+        // 5. แก้ไขข้อมูล
+        request.updateDetails(
+                roomNumber,
+                area,
+                repairItem,
+                description
+        );
+
+        // 6. บันทึก
+        return repository.save(request);
+    }
 
     @Transactional(readOnly = true)
     public List<RepairRequest> getMine(

@@ -5,6 +5,14 @@ import com.example.demo.dto.CreateRepairRequest;
 import com.example.demo.dto.UpdateRepairRequestStatus;
 import com.example.demo.service.RepairRequestService;
 
+import com.example.demo.dto.UpdateRepairRequest;
+import com.example.demo.entity.User;
+import com.example.demo.entity.User.Role;
+import com.example.demo.service.AuthService;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.web.server.ResponseStatusException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,19 +21,20 @@ import java.security.Principal;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("/api/repair-requests")
 public class RepairRequestController {
 
     private final RepairRequestService service;
+    private final AuthService authService;
 
     public RepairRequestController(
-            RepairRequestService service) {
+            RepairRequestService service,
+            AuthService authService) {
 
         this.service = service;
+        this.authService = authService;
     }
 
     @GetMapping
@@ -90,6 +99,34 @@ public List<RepairRequest> getAll(
             @RequestBody CreateRepairRequest request) {
 
         return service.create(request);
+    }
+
+  
+
+    @PutMapping("/{id}")
+    public RepairRequest update(
+            @PathVariable Long id,
+            @RequestBody UpdateRepairRequest body,
+            Authentication authentication) {
+
+        // 1. ดึง User จาก Session ที่ Login อยู่
+        User user = authService.getUser(authentication.getName());
+
+        // 2. อนุญาตเฉพาะนักศึกษา
+        if (user.getRole() != Role.STUDENT) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "เฉพาะนักศึกษาเท่านั้นที่แก้ไขคำร้องได้"
+            );
+        }
+
+        // 3. ส่งข้อมูลไปให้ Service แก้ไขคำร้อง
+        //    บัญชีนักศึกษาใช้รหัสนักศึกษาเป็น username
+        return service.update(
+                id,
+                body,
+                user.getUsername()
+        );
     }
 
     @PatchMapping("/{id}/accept")

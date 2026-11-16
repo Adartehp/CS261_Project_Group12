@@ -62,6 +62,7 @@ public class RepairRequest {
         this.status = "PENDING";
     }
 
+
     @PrePersist
     protected void onCreate() {
         LocalDateTime now = LocalDateTime.now();
@@ -74,6 +75,20 @@ public class RepairRequest {
         }
     }
 
+    // Method สำหรับแก้ไขข้อมูลคำร้อง
+    public void updateDetails(
+            String roomNumber,
+            String area,
+            String repairItem,
+            String description) {
+
+        this.roomNumber = roomNumber;
+        this.area = area;
+        this.repairItem = repairItem;
+        this.description = description;
+    }
+
+    // ทำงานอัตโนมัติก่อน JPA UPDATE ข้อมูล
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
