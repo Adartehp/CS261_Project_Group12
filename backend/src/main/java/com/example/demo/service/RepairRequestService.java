@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.RepairRequest;
 import com.example.demo.dto.CreateRepairRequest;
 import com.example.demo.repository.RepairRequestRepository;
+import com.example.demo.dto.UpdateRepairRequestStatus;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
+
+
 
 @Service
 public class RepairRequestService {
@@ -123,6 +126,59 @@ public class RepairRequestService {
 
         return getById(id);
     }
+    @Transactional
+    public RepairRequest updateStatus(
+            Long id,
+            UpdateRepairRequestStatus input) {
+
+        RepairRequest request = getById(id);
+        String current = request.getStatus();
+
+        if (input == null || input.status() == null) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "กรุณาระบุสถานะ"
+            );
+        }
+
+        String newStatus = input.status().strip().toUpperCase();
+
+        if (!newStatus.equals("DONE")
+                && !newStatus.equals("CANCELLED")) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "สถานะต้องเป็น DONE หรือ CANCELLED เท่านั้น"
+            );
+        }
+
+        boolean ok =("DONE".equals(newStatus) && "IN_PROGRESS".equals(current))
+        || ("CANCELLED".equals(newStatus) && Set.of("PENDING", "IN_PROGRESS").contains(current));
+
+        if (!ok) {
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "ไม่สามารถเปลี่ยนสถานะนี้ได้"
+            );
+        }
+
+        String staffNote = input.staffNote();
+
+        if (staffNote != null) {
+            staffNote = staffNote.strip();
+
+            if (staffNote.length() > 500) {
+                throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "หมายเหตุต้องไม่เกิน 500 ตัวอักษร"
+                );
+            }
+        }
+
+        request.updateStatus(newStatus, staffNote);
+
+        return repository.save(request);
+    }
+
 
     @Transactional(readOnly = true)
     public List<RepairRequest> getMine(
@@ -221,3 +277,5 @@ public class RepairRequestService {
         return cleaned;
     }
 }
+
+

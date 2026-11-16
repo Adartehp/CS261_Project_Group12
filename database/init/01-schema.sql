@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS repair_requests_demo1 (
     created_at  DATETIME(6)  NOT NULL,
     updated_at  DATETIME(6)  NOT NULL,
     accepted_at DATETIME(6)  NULL,
+    completed_at DATETIME(6)  NULL,
+    staff_note   VARCHAR(500) NULL,
     PRIMARY KEY (id)
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
