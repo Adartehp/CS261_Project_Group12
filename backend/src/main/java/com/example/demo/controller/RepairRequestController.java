@@ -96,9 +96,12 @@ public List<RepairRequest> getAll(
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public RepairRequest create(
-            @RequestBody CreateRepairRequest request) {
+            @RequestBody CreateRepairRequest request,
+            Principal principal) {
 
-        return service.create(request);
+        // ใช้รหัสนักศึกษาจาก session ที่ login อยู่ ไม่รับจากข้อมูลที่หน้าเว็บส่งมา
+        // บัญชีนักศึกษาใช้รหัสนักศึกษาเป็น username
+        return service.create(request, principal.getName());
     }
 
   

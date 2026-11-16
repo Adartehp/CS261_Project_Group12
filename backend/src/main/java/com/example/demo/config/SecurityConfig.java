@@ -87,6 +87,11 @@ public class SecurityConfig {
                     "/api/repair-requests/mine"
                 ).hasRole("STUDENT")
 
+                .requestMatchers(
+                    HttpMethod.POST,
+                    "/api/repair-requests"
+                ).hasRole("STUDENT")
+
                 // All remaining APIs require login
                 .anyRequest().authenticated()
             );

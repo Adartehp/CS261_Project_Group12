@@ -73,7 +73,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const submitBtn = document.getElementById('submitBtn');
     if (submitBtn) {
         submitBtn.addEventListener('click', async () => {
-            const studentId = document.getElementById('studentId').value.trim();
             const roomNumber = document.getElementById('room').value.trim();
             const area = document.getElementById('area').value;
             const repairItem = document.getElementById('repairItem').value;
@@ -92,8 +91,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'same-origin',
+                    // ไม่ต้องส่ง studentId เพราะ backend ใช้รหัสจาก session ที่ login อยู่
                     body: JSON.stringify({
-                        studentId,
                         roomNumber,
                         area,
                         repairItem,
