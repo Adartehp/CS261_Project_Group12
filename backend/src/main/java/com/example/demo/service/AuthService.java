@@ -6,6 +6,7 @@ import com.example.demo.exception.AuthException;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.tu.StudentInfo;
 import com.example.demo.tu.TuApiClient;
+import com.example.demo.tu.TuApiUnavailableException;
 
 import java.util.Optional;
 
@@ -41,8 +42,11 @@ public class AuthService {
     }
 
     /**
-     * US1-A (โหมดทดสอบปิด TU API): ตรวจสอบรูปแบบ email @dome.tu.ac.th และรหัส 10 หลัก
-     * แล้วบันทึก/อัปเดตนักศึกษาลงตาราง users ใน MySQL ทันที
+     * US1-A: นักศึกษา login ผ่าน TU API
+     * username = email, password = รหัสนักศึกษา 10 หลัก
+     * - รหัสไม่ใช่ตัวเลข 10 หลัก / TU ไม่พบ / email ไม่ตรง -> 401
+     * - TU API ใช้ไม่ได้ -> 503
+     * - ผ่าน -> บันทึกหรืออัปเดตนักศึกษาในตาราง users
      */
     @Transactional
     public User loginStudent(String email, String studentId) {
@@ -54,13 +58,18 @@ public class AuthService {
             throw new AuthException(HttpStatus.UNAUTHORIZED, BAD_CREDENTIALS);
         }
 
-        if (!cleanEmail.toLowerCase().endsWith("@dome.tu.ac.th")) {
-            throw new AuthException(HttpStatus.UNAUTHORIZED, BAD_CREDENTIALS);
+        StudentInfo info;
+        try {
+            info = tuApiClient.getStudentInfo(cleanId)
+                    .orElseThrow(() -> new AuthException(
+                            HttpStatus.UNAUTHORIZED, BAD_CREDENTIALS));
+        } catch (TuApiUnavailableException e) {
+            throw new AuthException(HttpStatus.SERVICE_UNAVAILABLE, TU_UNAVAILABLE);
         }
 
-        // สร้างข้อมูลนักศึกษาจำลองแทนการเรียก TU API
-        String displayName = cleanEmail.split("@")[0];
-        StudentInfo info = new StudentInfo(cleanId, cleanEmail, displayName);
+        if (info.email() == null || !info.email().equalsIgnoreCase(cleanEmail)) {
+            throw new AuthException(HttpStatus.UNAUTHORIZED, BAD_CREDENTIALS);
+        }
 
         String fullName = (info.displaynameTh() == null || info.displaynameTh().isBlank())
                 ? cleanId
@@ -81,6 +90,8 @@ public class AuthService {
 
     /**
      * US1-B: เจ้าหน้าที่ login ด้วยตาราง users + BCrypt
+     * - ไม่พบผู้ใช้ / รหัสผ่านผิด -> 401
+     * - กรอกข้อมูลบัญชีนักศึกษาถูกต้อง (US1-B TC02) -> 403
      */
     public User loginStaff(String username, String rawPassword) {
 
@@ -88,12 +99,14 @@ public class AuthService {
 
         Optional<User> byUsername = userRepository.findByUsername(cleanUsername);
         if (byUsername.isEmpty()) {
+            // นักศึกษากรอก email + รหัสนักศึกษา แบบเดียวกับหน้า login นักศึกษา
             rejectStudentCredentials(cleanUsername, rawPassword);
             throw new AuthException(HttpStatus.UNAUTHORIZED, BAD_CREDENTIALS);
         }
 
         User user = byUsername.get();
 
+        // ตรวจรหัสผ่านก่อน role เพื่อไม่บอกว่าบัญชีนี้เป็นนักศึกษาถ้ารหัสผิด
         if (user.getPasswordHash() == null
                 || !passwordEncoder.matches(rawPassword, user.getPasswordHash())) {
             throw new AuthException(HttpStatus.UNAUTHORIZED, BAD_CREDENTIALS);
@@ -106,6 +119,7 @@ public class AuthService {
         return user;
     }
 
+    /** ถ้า email + รหัสนักศึกษาตรงกับนักศึกษาที่เคย login แล้ว ให้ตอบ 403 */
     private void rejectStudentCredentials(String email, String rawPassword) {
         userRepository.findByEmailIgnoreCase(email)
                 .filter(u -> u.getRole() == Role.STUDENT)
@@ -115,7 +129,9 @@ public class AuthService {
                 });
     }
 
+    // ตรวจสอบผู้ใช้งานจาก Session
     public User getUser(String username) {
+
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new AuthException(
                         HttpStatus.UNAUTHORIZED,
