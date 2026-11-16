@@ -110,16 +110,16 @@ document.addEventListener("DOMContentLoaded", async () => {
                 card.className = "bg-white p-5 rounded-xl border border-[#c4ddf5] shadow-sm space-y-2";
                 card.innerHTML = `
                     <div class="flex justify-between text-sm text-gray-600">
-                        <span>รหัสนักศึกษา : <strong>${item.studentId || "-"}</strong></span>
-                        <span>ห้อง : <strong>${item.roomNumber || "-"}</strong></span>
+                        <span>รหัสนักศึกษา : <strong>${escapeHtml(item.studentId || "-")}</strong></span>
+                        <span>ห้อง : <strong>${escapeHtml(item.roomNumber || "-")}</strong></span>
                     </div>
-                    <div class="text-sm text-gray-800">พื้นที่ : <strong>${areaMap[item.area] || item.area || "-"}</strong> | รายการซ่อม : <strong>${item.repairItem || "-"}</strong></div>
-                    <div class="text-xs text-gray-500">รายละเอียด : ${item.description || "-"}</div>
+                    <div class="text-sm text-gray-800">พื้นที่ : <strong>${escapeHtml(areaMap[item.area] || item.area || "-")}</strong> | รายการซ่อม : <strong>${escapeHtml(item.repairItem || "-")}</strong></div>
+                    <div class="text-xs text-gray-500">รายละเอียด : ${escapeHtml(item.description || "-")}</div>
                     <div class="text-xs text-blue-700 pt-1">
-                        <i class="fa-regular fa-clock"></i> วันที่และเวลาที่แจ้ง : <strong>${formatDateTime(item.createdAt)}</strong>
+                        <i class="fa-regular fa-clock"></i> วันที่และเวลาที่แจ้ง : <strong>${escapeHtml(formatDateTime(item.createdAt))}</strong>
                     </div>
                     <div class="pt-3 flex justify-end">
-                        <button type="button" class="accept-btn bg-[#d63b15] hover:bg-[#b82d0b] text-white px-5 py-2 rounded-xl text-sm font-semibold transition shadow-sm cursor-pointer" data-id="${item.id}">
+                        <button type="button" class="accept-btn bg-[#d63b15] hover:bg-[#b82d0b] text-white px-5 py-2 rounded-xl text-sm font-semibold transition shadow-sm cursor-pointer" data-id="${escapeHtml(item.id)}">
                             <i class="fa-solid fa-check mr-1"></i> กดรับเรื่อง
                         </button>
                     </div>

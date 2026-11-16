@@ -114,15 +114,15 @@ document.addEventListener('DOMContentLoaded', async () => {
                 itemEl.className = 'bg-white p-5 rounded-xl border border-[#c4ddf5] shadow-sm space-y-2 cursor-pointer hover:border-[#d63b15] transition';
                 itemEl.innerHTML = `
                     <div class="flex justify-between text-sm text-gray-700">
-                        <span>รหัสนักศึกษา : <strong>${request.studentId || '-'}</strong></span>
-                        <span>รหัสห้องพัก : <strong>${request.roomNumber || '-'}</strong></span>
+                        <span>รหัสนักศึกษา : <strong>${escapeHtml(request.studentId || '-')}</strong></span>
+                        <span>รหัสห้องพัก : <strong>${escapeHtml(request.roomNumber || '-')}</strong></span>
                     </div>
-                    <div class="text-sm text-gray-800">พื้นที่ : <strong>${areaThai}</strong> | รายการซ่อม : <strong>${request.repairItem || '-'}</strong></div>
+                    <div class="text-sm text-gray-800">พื้นที่ : <strong>${escapeHtml(areaThai)}</strong> | รายการซ่อม : <strong>${escapeHtml(request.repairItem || '-')}</strong></div>
                     <div class="text-xs text-gray-600 pt-1 border-t border-gray-100 space-y-1">
-                        <div>แจ้งเมื่อ : <strong>${formatDateTime(request.createdAt)}</strong></div>
-                        <div>รับเรื่องเมื่อ : <strong>${formatDateTime(acceptedTime)}</strong></div>
+                        <div>แจ้งเมื่อ : <strong>${escapeHtml(formatDateTime(request.createdAt))}</strong></div>
+                        <div>รับเรื่องเมื่อ : <strong>${escapeHtml(formatDateTime(acceptedTime))}</strong></div>
                     </div>
-                    <div class="text-sm text-green-700 font-semibold pt-1">สถานะ : ${statusText(request.status)}</div>
+                    <div class="text-sm text-green-700 font-semibold pt-1">สถานะ : ${escapeHtml(statusText(request.status))}</div>
                 `;
 
                 itemEl.addEventListener('click', () => openDetails(request.id));

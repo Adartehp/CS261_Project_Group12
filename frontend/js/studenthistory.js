@@ -133,16 +133,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             card.className = 'bg-white p-4 rounded-xl border border-[#c4ddf5] shadow-sm space-y-1.5';
             card.innerHTML = `
                 <div class="flex justify-between text-sm text-gray-700">
-                    <span>รหัสห้องพัก : <strong>${item.roomNumber || '-'}</strong></span>
-                    <span class="text-xs text-gray-500">รหัสนศ. ${item.studentId}</span>
+                    <span>รหัสห้องพัก : <strong>${escapeHtml(item.roomNumber || '-')}</strong></span>
+                    <span class="text-xs text-gray-500">รหัสนศ. ${escapeHtml(item.studentId)}</span>
                 </div>
-                <div class="text-sm text-gray-700">พื้นที่ : <strong>${itemArea}</strong> | รายการซ่อม : <strong>${item.repairItem || '-'}</strong></div>
-                <div class="text-xs text-gray-500">รายละเอียด : ${item.description || '-'}</div>
+                <div class="text-sm text-gray-700">พื้นที่ : <strong>${escapeHtml(itemArea)}</strong> | รายการซ่อม : <strong>${escapeHtml(item.repairItem || '-')}</strong></div>
+                <div class="text-xs text-gray-500">รายละเอียด : ${escapeHtml(item.description || '-')}</div>
                 <div class="text-xs text-gray-600 pt-1 border-t border-gray-100 space-y-0.5">
-                    <div>แจ้งเมื่อ : <strong>${createdTime}</strong></div>
-                    <div>รับเรื่องเมื่อ : <strong>${acceptedTime}</strong></div>
+                    <div>แจ้งเมื่อ : <strong>${escapeHtml(createdTime)}</strong></div>
+                    <div>รับเรื่องเมื่อ : <strong>${escapeHtml(acceptedTime)}</strong></div>
                 </div>
-                <div class="text-sm text-gray-600 pt-1">สถานะ : <span class="text-[#d63b15] font-semibold">${displayStatus}</span></div>
+                <div class="text-sm text-gray-600 pt-1">สถานะ : <span class="text-[#d63b15] font-semibold">${escapeHtml(displayStatus)}</span></div>
             `;
             historyContainer.appendChild(card);
         });

@@ -92,10 +92,10 @@ public class RepairRequestService {
     }
 
     @Transactional
-    public RepairRequest create(CreateRepairRequest input) {
+    public RepairRequest create(CreateRepairRequest input, String loggedInStudentId) {
 
         String studentId = required(
-            input.studentId(),
+            loggedInStudentId,
             10,
             "รหัสนักศึกษา"
         );
