@@ -53,15 +53,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        const response = await fetch('/api/repair-requests', {
+        const response = await fetch('/api/repair-requests/mine', {
             method: 'GET',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'same-origin'
         });
 
-        // หากติด 403 หรือ 404 ให้แสดงว่าไม่มีข้อมูล
-        if (response.status === 403 || response.status === 404) {
-            showNoData();
+        if (response.status === 401) {
+            window.location.href = 'studentlogin.html';
             return;
         }
 
@@ -70,8 +69,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         const rawData = await response.json();
         const allRequests = Array.isArray(rawData) ? rawData : (rawData.data || rawData.content || []);
 
-        // กรองเฉพาะรายการที่ studentId ตรงกับรหัสนักศึกษาที่ล็อกอิน
-        const myRequests = allRequests.filter(item => String(item.studentId) === String(currentUser.username));
+        // /mine ส่งเฉพาะคำร้องของนักศึกษาที่ login อยู่ เรียงจากใหม่ไปเก่า
+        const myRequests = allRequests;
 
         // ถ้าไม่มีข้อมูลของนักศึกษาคนนี้ ให้ขึ้นว่า "ไม่มีข้อมูล"
         if (myRequests.length === 0) {
