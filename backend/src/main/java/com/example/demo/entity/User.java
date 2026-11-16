@@ -29,9 +29,6 @@ public class User {
     @Column(unique = true , nullable = true , length = 150)
     private String email;
 
-    @Column(name = "student_id", unique = true, length = 20)
-    private String studentId;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Role role;
@@ -53,11 +50,21 @@ public class User {
         this.role = role;
     }
 
+    /** สร้างนักศึกษาตอน login ครั้งแรก (username = รหัสนักศึกษา, ไม่มีรหัสผ่านในระบบ) */
+    public static User student(String studentId, String email, String fullName) {
+        return new User(studentId, null, fullName, email, Role.STUDENT);
+    }
+
+    /** อัปเดตชื่อและ email ล่าสุดจาก TU ทุกครั้งที่ login */
+    public void updateProfile(String email, String fullName) {
+        this.email = email;
+        this.fullName = fullName;
+    }
+
     public Long getId() { return id; }
     public String getUsername() { return username; }
     public String getPasswordHash() { return passwordHash; }
     public String getFullName() { return fullName; }
     public String getEmail(){ return email;}
     public Role getRole() { return role; }
-    public String getStudentId() { return studentId; }
 }

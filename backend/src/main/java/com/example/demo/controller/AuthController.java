@@ -5,7 +5,6 @@ import com.example.demo.dto.LoginRequest;
 import com.example.demo.dto.LoginResponse;
 import com.example.demo.entity.User;
 import com.example.demo.service.AuthService;
-import com.example.demo.entity.User.Role;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -51,10 +50,9 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response) {
 
-        User user = authService.login(
+        User user = authService.loginStudent(
                 body.username(),
-                body.password(),
-                Role.STUDENT
+                body.password()
         );
 
         return createSession(user, request, response);
