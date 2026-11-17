@@ -2,14 +2,19 @@
 
 เว็บแอปพลิเคชันสำหรับให้นักศึกษาส่งคำร้องแจ้งซ่อม และให้เจ้าหน้าที่ตรวจสอบรายละเอียดพร้อมรับเรื่อง โดยจัดเก็บข้อมูลใน MySQL
 
-## ฟีเจอร์ปัจจุบัน (Demo 1)
+## ฟีเจอร์ปัจจุบัน (Demo 2)
 
-- เลือกเข้าหน้านักศึกษาหรือเจ้าหน้าที่
-- ส่งแจ้งซ่อมพร้อมรหัสนักศึกษา ห้อง พื้นที่ และรายละเอียด
-- แสดงรายการและรายละเอียดคำร้อง
-- รับเรื่องจากสถานะ `PENDING` เป็น `IN_PROGRESS` และป้องกันการรับเรื่องซ้ำ
+- นักศึกษา login ผ่าน TU API ด้วย email และรหัสนักศึกษา ส่วนเจ้าหน้าที่ login ด้วยบัญชีในระบบ (BCrypt) และแต่ละบทบาทเรียกได้เฉพาะ API ของตัวเอง
+- นักศึกษาแจ้งซ่อม ดูสถานะและประวัติของตัวเอง กรองตามสถานะหรือเลขที่ใบแจ้งซ่อม และแก้ไขคำร้องที่ยังรอรับเรื่อง
+- เจ้าหน้าที่ดูรายการรอรับเรื่อง กดรับเรื่อง เปลี่ยนสถานะเป็นซ่อมเสร็จหรือยกเลิกพร้อมหมายเหตุ และดูประวัติพร้อมตัวกรอง
+- สถานะคำร้อง: `PENDING` → `IN_PROGRESS` → `DONE` และยกเลิกเป็น `CANCELLED` ได้จาก `PENDING` หรือ `IN_PROGRESS`
 
-การเลือกบทบาทยังไม่ใช่ระบบยืนยันตัวตนหรือควบคุมสิทธิ์ และยังไม่มีขั้นตอนปิดงานซ่อม
+## Version History
+
+| เวอร์ชัน | Demo | สิ่งที่มี |
+| --- | --- | --- |
+| `v2.0.0` | Demo 2 (Sprint 2) | Login นักศึกษาและเจ้าหน้าที่, สถานะและประวัติของนักศึกษา, แก้ไขคำร้อง, เปลี่ยนสถานะและประวัติของเจ้าหน้าที่, แยกเป็น 3 containers (Nginx, Spring Boot, MySQL) |
+| `v1.0.0` | Demo 1 (Sprint 1) | แจ้งซ่อม, ดูรายการและรายละเอียดคำร้อง, รับเรื่องและป้องกันการรับซ้ำ |
 
 ## เทคโนโลยี
 
@@ -65,7 +70,7 @@ docker compose ps
 ## เอกสารและการทดสอบ
 
 - [วิธีรันและจัดการ Docker](docs/docker.md)
-- [รายงานทดสอบ Demo 1 ด้วยตนเอง](docs/demo1-test-report.md)
-- [Postman collection](postman/demo1-backend.postman_collection.json) — ตั้ง `baseUrl` เป็น `http://localhost:18080` เมื่อทดสอบ Docker
+- [รายงานทดสอบ Demo 2](docs/demo2-test-report.md) และ [รายงานทดสอบ Demo 1](docs/demo1-test-report.md)
+- Postman collection ใน `postman/`: [Demo 1](postman/demo1-backend.postman_collection.json), [US1 Login](postman/sprint2-us1-login.postman_collection.json), [US3/US9 นักศึกษา](postman/sprint2-us3-us9-student.postman_collection.json), [US7/US8 เจ้าหน้าที่](postman/sprint2-us7-us8-staff.postman_collection.json) — ตั้ง `baseUrl` เป็น `http://localhost:18080` เมื่อทดสอบ Docker
 
 ระหว่าง build image ของ backend จะรัน JUnit ด้วย ถ้า test ไม่ผ่าน build จะหยุด ไม่ commit `.env`, รหัสผ่านจริง หรือไฟล์ที่สร้างใน `target/`
