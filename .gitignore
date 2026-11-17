@@ -39,3 +39,6 @@ build/
 
 # macOS metadata
 .DS_Store
+
+# curl cookie jar ตอนทดสอบ API
+cookies.txt
