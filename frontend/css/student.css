@@ -406,3 +406,76 @@ body {
         max-width: 100%;
     }
 }
+/* ฟอร์มแก้ไขคำร้อง (US4) ในหน้าสถานะและประวัติ */
+.edit-input {
+    width: 100%;
+    border: 1px solid #c4ddf5;
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-size: 14px;
+    color: #1e293b;
+    background-color: #ffffff;
+    resize: vertical;
+}
+
+.edit-input:focus {
+    outline: none;
+    border-color: #d63b15;
+    box-shadow: 0 0 0 2px rgba(214, 59, 21, 0.15);
+}
+
+.edit-btn-primary,
+.edit-btn-secondary,
+.edit-open-btn {
+    border-radius: 10px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.edit-btn-primary {
+    background-color: #d63b15;
+    border: 1px solid #b82d0b;
+    color: #ffffff;
+}
+
+.edit-btn-primary:hover {
+    background-color: #b82d0b;
+}
+
+.edit-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.edit-btn-secondary {
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+}
+
+.edit-btn-secondary:hover {
+    background-color: #f1f5f9;
+}
+
+.edit-open-btn {
+    padding: 5px 12px;
+    font-size: 13px;
+    background-color: #ffffff;
+    border: 1px solid #d63b15;
+    color: #d63b15;
+}
+
+.edit-open-btn:hover:not(:disabled) {
+    background-color: #fbece8;
+}
+
+.edit-open-btn:disabled {
+    border-color: #cbd5e1;
+    color: #94a3b8;
+    cursor: not-allowed;
+}
