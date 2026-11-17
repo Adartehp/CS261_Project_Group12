@@ -84,6 +84,50 @@
 
     </main>
 
+    <!-- ฟอร์มแก้ไขคำร้อง (US4) แก้ได้เฉพาะคำร้องที่ยังรอรับเรื่อง -->
+    <div class="modal-overlay" id="editOverlay">
+        <form id="editForm" class="bg-white w-full max-w-[420px] rounded-[20px] shadow-xl p-6 space-y-4 max-h-[90vh] overflow-y-auto" novalidate>
+            <h2 class="text-lg font-bold text-gray-800">แก้ไขรายการแจ้งซ่อม</h2>
+
+            <label class="flex flex-col gap-1 text-sm text-gray-700">
+                ห้อง *
+                <input type="text" id="editRoom" maxlength="20" class="edit-input" placeholder="รหัสห้องพัก">
+            </label>
+
+            <label class="flex flex-col gap-1 text-sm text-gray-700">
+                พื้นที่ *
+                <select id="editArea" class="edit-input">
+                    <option value="" disabled>เลือกพื้นที่ห้อง</option>
+                    <option value="bedroom">ห้องนอน</option>
+                    <option value="restroom">ห้องนั่งเล่น (เฉพาะโซน B)</option>
+                    <option value="centerpoint">พื้นที่ส่วนกลาง</option>
+                    <option value="bathroom">ห้องน้ำ</option>
+                    <option value="balcony">ระเบียง+ลานซักผ้า</option>
+                    <option value="key">รายการกุญแจ</option>
+                    <option value="air">เครื่องปรับอากาศ (แอร์)</option>
+                </select>
+            </label>
+
+            <label class="flex flex-col gap-1 text-sm text-gray-700">
+                รายการซ่อม *
+                <select id="editRepairItem" class="edit-input"></select>
+            </label>
+
+            <label class="flex flex-col gap-1 text-sm text-gray-700">
+                <span>รายละเอียดการซ่อม <span class="text-gray-400">( ไม่จำเป็น )</span></span>
+                <textarea id="editDescription" maxlength="150" rows="3" class="edit-input" placeholder="กรุณากรอกข้อมูลเพิ่มเติม"></textarea>
+                <span class="text-xs text-gray-400 self-end"><span id="editCount">0</span>/150</span>
+            </label>
+
+            <p id="editError" class="text-sm text-red-600 hidden" role="alert"></p>
+
+            <div class="flex justify-end gap-2 pt-1">
+                <button type="button" id="editCancel" class="edit-btn-secondary">ยกเลิก</button>
+                <button type="submit" id="editSave" class="edit-btn-primary">บันทึก</button>
+            </div>
+        </form>
+    </div>
+
     <script src="js/auth.js"></script>
     <script src="js/studenthistory.js"></script>
 </body>
