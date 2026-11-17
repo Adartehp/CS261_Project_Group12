@@ -217,16 +217,63 @@ build 3 containers ใหม่จาก branch นี้ นักศึกษ�
 
 บน branch `test/task41-status-history` เพิ่ม JUnit 32 กรณี รวม 55 กรณี ผ่านทั้งหมด
 
+## ส่วนที่ 6: Integration Test (UI ↔ API ↔ DB) บน 3 containers (Task42)
+
+ทดสอบบน `release/v2.0.0` หลัง merge #35, #36, #37 (`f65dd5c`) เมื่อ 18 พ.ย. 2026
+build ใหม่ด้วย `docker compose up -d --build` ใช้ volume ฐานข้อมูลเดิม ทั้ง 3 containers ขึ้น healthy
+ข้อมูลทดสอบอยู่ห้อง `T-421` และติด `[test-task42]` ในรายละเอียด
+
+### 1. ทุกหน้าและ API ผ่าน Nginx
+
+| ตรวจ | ผล |
+|---|---|
+| เปิด 10 หน้า (`index`, `studentlogin`, `studentselect`, `student`, `studenthistory`, `stafflogin`, `staffselect`, `staffreceive`, `staff` และ `/`) ที่ `localhost:18080` | 200 ทุกหน้า |
+| `frontend/js` เรียก API แบบ path `/api/...` เท่านั้น ไม่มี URL ของ backend ฝังในโค้ด | ผ่าน |
+| Nginx ส่งต่อ `/api/` ไป `backend:8080` ภายใน network ของ compose | ผ่าน |
+| backend ไม่เปิด port ออกนอกเครื่อง (`docker compose port backend 8080` ว่าง, `localhost:8080` เชื่อมต่อไม่ได้) | ผ่าน |
+| ไม่ login แล้วเรียก `/api/repair-requests`, `/api/auth/me` | 401, 401 |
+
+### 2. Flow ทั้งระบบ
+
+| ขั้น | ทำผ่าน | ผลที่หน้าเว็บ / API | ผลใน DB (`repair_requests_demo1`) | สถานะ |
+|---|---|---|---|---|
+| 1 | นักศึกษา login ผ่าน TU API | เข้า `studentselect.html`, `/me` ได้ role STUDENT | - | ผ่าน |
+| 2 | นักศึกษาแจ้งซ่อม 3 รายการผ่าน `student.html` (A หลอดไฟ, B ผ้าม่าน, C แอร์) | ป็อปอัพ "แจ้งซ่อมสำเร็จ" ทุกรายการ | มีแถว #19, #20, #21 สถานะ PENDING `student_id` ตรงกับผู้ login ภาษาไทยถูกต้อง | ผ่าน |
+| 3 | นักศึกษาแก้ไข B (#20) จาก `studenthistory.html` เปลี่ยนพื้นที่และรายละเอียด | การ์ดแสดงข้อมูลใหม่ทันที | `area` = balcony, `description` ใหม่ | ผ่าน |
+| 4 | เจ้าหน้าที่รับเรื่อง A, B แล้วเปลี่ยน A เป็น DONE และ B เป็น CANCELLED (ผ่าน API ที่ Nginx อีก session) | 200 ทุกคำสั่ง, A DONE → CANCELLED ได้ 409 "ไม่สามารถเปลี่ยนสถานะนี้ได้" | #19 DONE มี `accepted_at` `completed_at`, #20 CANCELLED มี `accepted_at` ไม่มี `completed_at` | ผ่าน |
+| 5 | นักศึกษารีเฟรช `studenthistory.html` | #19 "เสร็จสิ้น" พร้อมเวลารับเรื่องและซ่อมเสร็จ, #20 "ยกเลิก", #21 "รอรับเรื่อง" ปุ่มแก้ไขเปิดเฉพาะ #21 | ตรงกับ DB | ผ่าน |
+| 6 | `docker compose restart` ทั้ง 3 containers | ขึ้น healthy ครบ session เดิมได้ 401 ต้อง login ใหม่ | #19–#21 สถานะ เวลา และข้อมูลที่แก้ยังอยู่ครบ | ผ่าน |
+| 7 | เจ้าหน้าที่ login `staff01` ผ่าน `stafflogin.html` แล้วกด "กดรับเรื่อง" C (#21) ใน `staffreceive.html` | ขึ้น "รับเรื่องแจ้งซ่อมเรียบร้อยแล้ว" และ #21 หายจากรายการรอรับเรื่อง | #21 IN_PROGRESS มี `accepted_at` | ผ่าน |
+| 8 | ใน `staff.html` เปิด #21 ใส่หมายเหตุ แล้วกด "ซ่อมเสร็จแล้ว" | การ์ดเปลี่ยนเป็น "เสร็จสิ้น" | #21 DONE มี `completed_at` และ `staff_note` | ผ่าน |
+| 9 | ใน `staff.html` กรองห้อง `T-421` แล้วกรองเพิ่มสถานะ "เสร็จสิ้น" | พบ 3 รายการ แล้วเหลือ 2 รายการ (#19, #21) | ตรงกับ DB | ผ่าน |
+
+**สรุปส่วนที่ 6:** ตรวจ 5 ข้อ และ flow 9 ขั้น ผ่านทั้งหมด
+
+หมายเหตุ:
+- ขั้น 4 ส่งหมายเหตุใน field ชื่อ `note` แต่ API ใช้ `staffNote` จึงไม่ได้บันทึกหมายเหตุของ #19 และ #20 ส่วนการบันทึกหมายเหตุทดสอบผ่านหน้าเว็บในขั้น 8 แทน
+- `confirm()` และ `alert()` ของเบราว์เซอร์ถูกแทนให้ตอบ "ตกลง" อัตโนมัติระหว่างทดสอบ เพราะ browser ที่ใช้ทดสอบปิด dialog เอง ข้อความที่ขึ้นตรงตามโค้ด
+- ไม่ได้ให้นักศึกษา login ใหม่หลัง restart เพื่อดูผลของขั้น 7–8 เพราะต้องใช้บัญชี TU จริง การแสดงผลฝั่งนักศึกษาทดสอบแล้วในขั้น 5
+
 ## Unit test
 
-`./mvnw package` ระหว่าง build Docker รัน JUnit 23 กรณี ผ่านทั้งหมด
-(`AuthServiceTest` 11, `RepairRequestUpdateTest` 5, `RepairRequestAuthorizationTest` 3, `RepairRequestCreateTest` 3, `DemoApplicationTests` 1)
+บน `release/v2.0.0` (`f65dd5c`) `./mvnw clean test` รัน JUnit 83 กรณี ผ่านทั้งหมด
 
-บน branch `test/task30-login` เพิ่ม `AuthSessionTest` 13 กรณี รวม 36 กรณี ผ่านทั้งหมด
+| Class | จำนวน |
+|---|---|
+| `RepairRequestStatusTransitionTest` | 19 |
+| `StudentMineTest` | 15 |
+| `AuthSessionTest` | 13 |
+| `AuthServiceTest` | 11 |
+| `StaffHistoryFilterTest` | 11 |
+| `RepairRequestUpdateTest` | 5 |
+| `RepairRequestAuthorizationTest` | 3 |
+| `RepairRequestCreateTest` | 3 |
+| `RepairRequestStatusRaceTest` | 2 |
+| `DemoApplicationTests` | 1 |
 
 ## ข้อจำกัด
 
-- ส่วนที่ 1–2 ทดสอบด้วยตนเองผ่านหน้าเว็บ เบราว์เซอร์ และ `curl` ส่วน Postman collection ของ Sprint 2 มีแล้วสำหรับ US1 (`sprint2-us1-login`) และ US7/US8 (`sprint2-us7-us8-staff`)
+- ส่วนที่ 1–2 ทดสอบด้วยตนเองผ่านหน้าเว็บ เบราว์เซอร์ และ `curl` ส่วน Postman collection ของ Sprint 2 มีครบแล้ว: US1 (`sprint2-us1-login`), US3/US9 (`sprint2-us3-us9-student`) และ US7/US8 (`sprint2-us7-us8-staff`)
 - ส่วนที่ 3 Postman ตรวจ status code ทุก request แต่ข้อความ error ตรวจใน JUnit (`AuthSessionTest`) หน้าเว็บฝั่งนักศึกษาของ Task30 ใช้ผลจากส่วนที่ 2
 - ยังไม่ได้ทดสอบบนเครื่องในห้อง Lab และยังไม่ได้ทำ UAT กับผู้ใช้จริง
 - ยังไม่ครอบคลุมการใช้งานพร้อมกันหลายคน หรือการทดสอบประสิทธิภาพเมื่อมีข้อมูลจำนวนมาก
