@@ -84,6 +84,50 @@ Test case อ้างอิงจากการ์ด US2, US5, US6 บน Tre
 
 **สรุปส่วนที่ 2:** 15 กรณี ผ่าน 15 ไม่ผ่าน 0
 
+## ส่วนที่ 3: ทดสอบ Login (Task30)
+
+ทดสอบบน branch `test/task30-login` ที่แยกจาก `release/v2.0.0` (`6ded4dd`) เมื่อ 17 พ.ย. 2026
+build 3 containers ใหม่จาก branch นี้ ฐานข้อมูลสร้างใหม่จาก `database/init`
+
+### JUnit
+
+| Class | จำนวน | ครอบคลุม |
+|---|---|---|
+| `AuthServiceTest` | 11 | นักศึกษา: email ตรง, email ไม่ตรง, ไม่พบรหัส, รหัสไม่ครบ 10 หลัก, TU API ล่ม (mock `TuApiClient`) / เจ้าหน้าที่: รหัสถูก, รหัสผิด, ไม่พบผู้ใช้, บัญชีนักศึกษา |
+| `AuthSessionTest` (ใหม่) | 13 | ยิงผ่าน controller และ Spring Security จริง mock แค่ TU API: login แล้วได้ session และ `/me` ตอบ role ถูก, 400 / 401 / 403 / 503, นักศึกษาเรียก API เจ้าหน้าที่ได้ 403 และกลับกัน, logout แล้ว session หมด, session ID เปลี่ยนหลัง login, ไม่ login ได้ 401 |
+
+### Postman
+
+`postman/sprint2-us1-login.postman_collection.json` 24 request ผ่าน Nginx ที่ `localhost:18080`
+นักศึกษา login ผ่าน TU API ด้วยบัญชีจริงของผู้ทดสอบ (ไม่บันทึกค่าไว้ใน collection)
+
+| ขั้น | Request | ผล |
+|---|---|---|
+| US1-A | email ไม่ตรงกับรหัสนักศึกษา | 401 |
+| US1-A TC03 | รหัสที่ TU ไม่รู้จัก | 401 |
+| US1-A TC02 | รหัสไม่ครบ 10 หลัก | 401 |
+| US1-A | เว้นว่างทุกช่อง | 400 |
+| US1-A TC01 | email และรหัสถูกต้อง | 200 role STUDENT |
+| US1-A | `/me`, `/mine` | 200, 200 |
+| US1-A | นักศึกษาเรียก `GET /api/repair-requests`, `PATCH .../accept` | 403, 403 |
+| US1-A | logout แล้วเรียก `/me` | 204, 401 |
+| US1-B | รหัสผ่านผิด, ไม่พบผู้ใช้ | 401, 401 |
+| US1-B TC02 | บัญชีนักศึกษา login หน้าเจ้าหน้าที่ | 403 และไม่มี session (`/me` 401) |
+| US1-B TC01 | `staff01` รหัสถูก | 200 role STAFF |
+| US1-B | `/me`, `GET /api/repair-requests`, `/mine` | 200, 200, 403 |
+| US1-B | logout | 204 |
+| ไม่ login | รายการเจ้าหน้าที่, `/mine`, สร้างคำร้อง, เปลี่ยนสถานะ | 401 ทั้ง 4 |
+
+**สรุป Postman:** 24 request ได้ status code ตรงทั้งหมด
+
+### หน้าเว็บ
+
+| Story | กรณี | ผล |
+|---|---|---|
+| US1-B TC01 | `staff01` login ผ่าน `stafflogin.html` แล้วเข้า `staffselect.html` | ผ่าน |
+| US1-B | รหัสผ่านผิดขึ้น "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" และอยู่หน้าเดิม | ผ่าน |
+| US1-B | กด "ออกจากระบบ" แล้วเปิด `staffselect.html` ตรงๆ ถูกส่งกลับไป `stafflogin.html` | ผ่าน |
+
 ## ส่วนที่ 5: ทดสอบการเปลี่ยนสถานะและประวัติของเจ้าหน้าที่ (Task41)
 
 ทดสอบบน branch `test/task41-status-history` ที่แยกจาก `release/v2.0.0` (`6ded4dd`) เมื่อ 17 พ.ย. 2026
@@ -133,50 +177,6 @@ build 3 containers ใหม่จาก branch นี้ นักศึกษ�
 ภาพหลักฐาน: `task41-junit.png`, `task41-postman.png` และ `task41-1` ถึง `task41-4` ในโฟลเดอร์ `web/`
 
 บน branch `test/task41-status-history` เพิ่ม JUnit 32 กรณี รวม 55 กรณี ผ่านทั้งหมด
-
-## ส่วนที่ 3: ทดสอบ Login (Task30)
-
-ทดสอบบน branch `test/task30-login` ที่แยกจาก `release/v2.0.0` (`6ded4dd`) เมื่อ 17 พ.ย. 2026
-build 3 containers ใหม่จาก branch นี้ ฐานข้อมูลสร้างใหม่จาก `database/init`
-
-### JUnit
-
-| Class | จำนวน | ครอบคลุม |
-|---|---|---|
-| `AuthServiceTest` | 11 | นักศึกษา: email ตรง, email ไม่ตรง, ไม่พบรหัส, รหัสไม่ครบ 10 หลัก, TU API ล่ม (mock `TuApiClient`) / เจ้าหน้าที่: รหัสถูก, รหัสผิด, ไม่พบผู้ใช้, บัญชีนักศึกษา |
-| `AuthSessionTest` (ใหม่) | 13 | ยิงผ่าน controller และ Spring Security จริง mock แค่ TU API: login แล้วได้ session และ `/me` ตอบ role ถูก, 400 / 401 / 403 / 503, นักศึกษาเรียก API เจ้าหน้าที่ได้ 403 และกลับกัน, logout แล้ว session หมด, session ID เปลี่ยนหลัง login, ไม่ login ได้ 401 |
-
-### Postman
-
-`postman/sprint2-us1-login.postman_collection.json` 24 request ผ่าน Nginx ที่ `localhost:18080`
-นักศึกษา login ผ่าน TU API ด้วยบัญชีจริงของผู้ทดสอบ (ไม่บันทึกค่าไว้ใน collection)
-
-| ขั้น | Request | ผล |
-|---|---|---|
-| US1-A | email ไม่ตรงกับรหัสนักศึกษา | 401 |
-| US1-A TC03 | รหัสที่ TU ไม่รู้จัก | 401 |
-| US1-A TC02 | รหัสไม่ครบ 10 หลัก | 401 |
-| US1-A | เว้นว่างทุกช่อง | 400 |
-| US1-A TC01 | email และรหัสถูกต้อง | 200 role STUDENT |
-| US1-A | `/me`, `/mine` | 200, 200 |
-| US1-A | นักศึกษาเรียก `GET /api/repair-requests`, `PATCH .../accept` | 403, 403 |
-| US1-A | logout แล้วเรียก `/me` | 204, 401 |
-| US1-B | รหัสผ่านผิด, ไม่พบผู้ใช้ | 401, 401 |
-| US1-B TC02 | บัญชีนักศึกษา login หน้าเจ้าหน้าที่ | 403 และไม่มี session (`/me` 401) |
-| US1-B TC01 | `staff01` รหัสถูก | 200 role STAFF |
-| US1-B | `/me`, `GET /api/repair-requests`, `/mine` | 200, 200, 403 |
-| US1-B | logout | 204 |
-| ไม่ login | รายการเจ้าหน้าที่, `/mine`, สร้างคำร้อง, เปลี่ยนสถานะ | 401 ทั้ง 4 |
-
-**สรุป Postman:** 24 request ได้ status code ตรงทั้งหมด
-
-### หน้าเว็บ
-
-| Story | กรณี | ผล |
-|---|---|---|
-| US1-B TC01 | `staff01` login ผ่าน `stafflogin.html` แล้วเข้า `staffselect.html` | ผ่าน |
-| US1-B | รหัสผ่านผิดขึ้น "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง" และอยู่หน้าเดิม | ผ่าน |
-| US1-B | กด "ออกจากระบบ" แล้วเปิด `staffselect.html` ตรงๆ ถูกส่งกลับไป `stafflogin.html` | ผ่าน |
 
 ## Unit test
 
