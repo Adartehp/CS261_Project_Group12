@@ -72,6 +72,31 @@ public interface RepairRequestRepository
             @Param("description") String description,
             @Param("now") LocalDateTime now
     );
+    // US7: เปลี่ยนสถานะใน UPDATE เดียวที่เช็คสถานะปัจจุบันไปพร้อมกัน
+    // แตะเฉพาะคอลัมน์สถานะ จึงไม่เขียนทับรายละเอียดที่นักศึกษาเพิ่งแก้
+    // และถ้าเจ้าหน้าที่อีกคนเปลี่ยนสถานะไปก่อน จะไม่มีแถวถูกแก้
+    @Modifying(
+        clearAutomatically = true,
+        flushAutomatically = true
+    )
+    @Query("""
+        update RepairRequest r
+        set r.status = :newStatus,
+            r.staffNote = :staffNote,
+            r.completedAt = :completedAt,
+            r.updatedAt = :now
+        where r.id = :id
+          and r.status in :allowedCurrent
+        """)
+    int changeStatus(
+            @Param("id") Long id,
+            @Param("allowedCurrent") java.util.Collection<String> allowedCurrent,
+            @Param("newStatus") String newStatus,
+            @Param("staffNote") String staffNote,
+            @Param("completedAt") LocalDateTime completedAt,
+            @Param("now") LocalDateTime now
+    );
+
     @Query("""
         select r from RepairRequest r
         where (:status is null or r.status = :status)
