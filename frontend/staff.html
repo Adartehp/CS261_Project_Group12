@@ -94,6 +94,20 @@
                 <span class="modal-label">รายละเอียดการซ่อม :</span>
                 <div class="modal-input-lg"></div>
             </div>
+            <!-- US7: เปลี่ยนสถานะคำร้อง แสดงเฉพาะคำร้องที่ยังเปลี่ยนสถานะได้ -->
+            <div id="statusActions" class="status-actions hidden">
+                <label for="staffNote" class="modal-label">หมายเหตุถึงนักศึกษา <span class="text-gray-400 font-normal">( ไม่จำเป็น )</span></label>
+                <textarea id="staffNote" maxlength="500" rows="2" class="filter-input" placeholder="เช่น เปลี่ยนหลอดไฟใหม่แล้ว"></textarea>
+                <p id="statusError" class="text-sm text-red-600 hidden" role="alert"></p>
+                <div class="flex flex-wrap justify-end gap-2">
+                    <button type="button" id="cancelRequestBtn" class="filter-btn-secondary">
+                        <i class="fa-solid fa-ban"></i> ยกเลิกคำร้อง
+                    </button>
+                    <button type="button" id="doneRequestBtn" class="filter-btn-primary">
+                        <i class="fa-solid fa-check"></i> ซ่อมเสร็จแล้ว
+                    </button>
+                </div>
+            </div>
             <div class="modal-btn-container">
                 <button class="submit-btn" id="submitBtn">ปิด</button>
             </div>
