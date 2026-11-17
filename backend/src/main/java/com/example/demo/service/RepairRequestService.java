@@ -171,9 +171,6 @@ public class RepairRequestService {
             Long id,
             UpdateRepairRequestStatus input) {
 
-        RepairRequest request = getById(id);
-        String current = request.getStatus();
-
         if (input == null || input.status() == null) {
             throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
@@ -181,25 +178,17 @@ public class RepairRequestService {
             );
         }
 
-        String newStatus = input.status().strip().toUpperCase();
+        String newStatus = input.status().strip().toUpperCase(Locale.ROOT);
 
-        if (!newStatus.equals("DONE")
-                && !newStatus.equals("CANCELLED")) {
-            throw new ResponseStatusException(
+        // สถานะปัจจุบันที่เปลี่ยนไปเป็นสถานะใหม่ได้
+        Set<String> allowedCurrent = switch (newStatus) {
+            case "DONE" -> Set.of("IN_PROGRESS");
+            case "CANCELLED" -> Set.of("PENDING", "IN_PROGRESS");
+            default -> throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 "สถานะต้องเป็น DONE หรือ CANCELLED เท่านั้น"
             );
-        }
-
-        boolean ok =("DONE".equals(newStatus) && "IN_PROGRESS".equals(current))
-        || ("CANCELLED".equals(newStatus) && Set.of("PENDING", "IN_PROGRESS").contains(current));
-
-        if (!ok) {
-            throw new ResponseStatusException(
-                HttpStatus.CONFLICT,
-                "ไม่สามารถเปลี่ยนสถานะนี้ได้"
-            );
-        }
+        };
 
         String staffNote = input.staffNote();
 
@@ -214,9 +203,29 @@ public class RepairRequestService {
             }
         }
 
-        request.updateStatus(newStatus, staffNote);
+        // ห้ามใช้ findById แล้ว save เพราะจะเขียนค่าที่อ่านไว้ทับ
+        // การแก้ไขของนักศึกษาหรือสถานะที่เจ้าหน้าที่อีกคนเพิ่งเปลี่ยน
+        LocalDateTime now = LocalDateTime.now();
 
-        return repository.save(request);
+        int updatedRows = repository.changeStatus(
+            id,
+            allowedCurrent,
+            newStatus,
+            staffNote,
+            "DONE".equals(newStatus) ? now : null,
+            now
+        );
+
+        if (updatedRows == 0) {
+            getById(id); // ไม่พบ -> 404
+
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "ไม่สามารถเปลี่ยนสถานะนี้ได้"
+            );
+        }
+
+        return getById(id);
     }
 
 
