@@ -24,7 +24,62 @@
 
     <main class="max-w-[720px] w-full mx-auto p-6 flex-1">
         <h1 class="page-title text-2xl font-bold text-center mb-5 text-[#111]">ประวัติ</h1>
-        
+
+        <form id="filterForm" class="bg-white p-4 rounded-xl border border-[#c4ddf5] shadow-sm mb-5" novalidate>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                <label class="flex flex-col text-sm text-gray-700 gap-1">
+                    สถานะ
+                    <select id="filterStatus" name="status" class="filter-input">
+                        <option value="">ทั้งหมด</option>
+                        <option value="PENDING">รอรับเรื่อง</option>
+                        <option value="IN_PROGRESS">รับเรื่องแล้ว</option>
+                        <option value="DONE">เสร็จสิ้น</option>
+                        <option value="CANCELLED">ยกเลิก</option>
+                    </select>
+                </label>
+                <label class="flex flex-col text-sm text-gray-700 gap-1">
+                    พื้นที่
+                    <select id="filterArea" name="area" class="filter-input">
+                        <option value="">ทั้งหมด</option>
+                        <option value="bedroom">ห้องนอน</option>
+                        <option value="restroom">ห้องนั่งเล่น (เฉพาะโซน B)</option>
+                        <option value="centerpoint">พื้นที่ส่วนกลาง</option>
+                        <option value="bathroom">ห้องน้ำ</option>
+                        <option value="balcony">ระเบียง+ลานซักผ้า</option>
+                        <option value="key">รายการกุญแจ</option>
+                        <option value="air">เครื่องปรับอากาศ (แอร์)</option>
+                    </select>
+                </label>
+                <label class="flex flex-col text-sm text-gray-700 gap-1">
+                    รหัสห้องพัก
+                    <input type="text" id="filterRoom" name="room" class="filter-input" placeholder="เช่น A305" maxlength="20">
+                </label>
+                <label class="flex flex-col text-sm text-gray-700 gap-1">
+                    รหัสนักศึกษา
+                    <input type="text" id="filterStudentId" name="studentId" class="filter-input" placeholder="เช่น 6809540179" maxlength="20" inputmode="numeric">
+                </label>
+                <label class="flex flex-col text-sm text-gray-700 gap-1">
+                    แจ้งตั้งแต่วันที่
+                    <input type="date" id="filterFrom" name="from" class="filter-input">
+                </label>
+                <label class="flex flex-col text-sm text-gray-700 gap-1">
+                    ถึงวันที่
+                    <input type="date" id="filterTo" name="to" class="filter-input">
+                </label>
+            </div>
+            <p id="filterError" class="text-sm text-red-600 mt-3 hidden" role="alert"></p>
+            <div class="flex justify-end gap-2 mt-4">
+                <button type="button" id="filterReset" class="filter-btn-secondary">
+                    <i class="fa-solid fa-rotate-left"></i> ล้าง
+                </button>
+                <button type="submit" class="filter-btn-primary">
+                    <i class="fa-solid fa-magnifying-glass"></i> ค้นหา
+                </button>
+            </div>
+        </form>
+
+        <p id="resultCount" class="text-sm text-gray-600 mb-3"></p>
+
         <!-- นำกรอบการ์ดชั้นนอกออก ให้รายการเรียงต่อกันและเลื่อนดูได้เลย -->
         <div id="notificationContainer" class="space-y-4 pb-8"></div>
     </main>
