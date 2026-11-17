@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         latestContent.innerHTML = '<p class="text-center text-gray-500 py-4 font-medium">ไม่มีข้อมูล</p>';
         historyContainer.innerHTML = '<p class="text-center text-gray-500 py-4 font-medium">ไม่มีข้อมูล</p>';
+        document.getElementById('historyCount').textContent = '';
     }
 
     function formatDateTime(isoString) {
@@ -111,9 +112,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         myRequests.forEach(item => {
             const itemArea = areaMap[item.area] || item.area || '-';
             const createdTime = formatDateTime(item.createdAt);
-            const acceptedTime = (item.status && item.status !== 'รอรับเรื่อง' && item.status !== 'PENDING')
-                ? formatDateTime(item.acceptedAt || item.updatedAt)
-                : 'ยังไม่รับเรื่อง';
+            // ใช้ acceptedAt เท่านั้น คำร้องที่ยกเลิกก่อนรับเรื่องจะไม่มีเวลารับเรื่อง
+            const acceptedTime = item.acceptedAt ? formatDateTime(item.acceptedAt) : 'ยังไม่รับเรื่อง';
             const displayStatus = statusLabels[item.status] || item.status || 'รอรับเรื่อง';
 
             // US4: แก้ไขได้เฉพาะคำร้องที่ยังไม่มีการเปลี่ยนสถานะ
@@ -124,14 +124,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             card.className = 'bg-white p-4 rounded-xl border border-[#c4ddf5] shadow-sm space-y-1.5';
             card.innerHTML = `
                 <div class="flex justify-between text-sm text-gray-700">
-                    <span>รหัสห้องพัก : <strong>${escapeHtml(item.roomNumber || '-')}</strong></span>
+                    <span>เลขที่ใบแจ้งซ่อม : <strong>#${escapeHtml(item.id)}</strong></span>
                     <span class="text-xs text-gray-500">รหัสนศ. ${escapeHtml(item.studentId)}</span>
                 </div>
+                <div class="text-sm text-gray-700">รหัสห้องพัก : <strong>${escapeHtml(item.roomNumber || '-')}</strong></div>
                 <div class="text-sm text-gray-700">พื้นที่ : <strong>${escapeHtml(itemArea)}</strong> | รายการซ่อม : <strong>${escapeHtml(item.repairItem || '-')}</strong></div>
                 <div class="text-xs text-gray-500">รายละเอียด : ${escapeHtml(item.description || '-')}</div>
                 <div class="text-xs text-gray-600 pt-1 border-t border-gray-100 space-y-0.5">
                     <div>แจ้งเมื่อ : <strong>${escapeHtml(createdTime)}</strong></div>
                     <div>รับเรื่องเมื่อ : <strong>${escapeHtml(acceptedTime)}</strong></div>
+                    ${item.completedAt ? `<div>ซ่อมเสร็จเมื่อ : <strong>${escapeHtml(formatDateTime(item.completedAt))}</strong></div>` : ''}
+                    ${item.staffNote ? `<div>หมายเหตุจากเจ้าหน้าที่ : <strong>${escapeHtml(item.staffNote)}</strong></div>` : ''}
                 </div>
                 <div class="flex justify-between items-center pt-1 gap-2">
                     <div class="text-sm text-gray-600">สถานะ : <span class="text-[#d63b15] font-semibold">${escapeHtml(displayStatus)}</span></div>
@@ -146,6 +149,34 @@ document.addEventListener('DOMContentLoaded', async () => {
             historyContainer.appendChild(card);
         });
     }
+
+    // US9 TC02: กรองประวัติตามสถานะ หรือค้นหาเลขที่ใบแจ้งซ่อม (กรองในหน้าเว็บ เพราะ /mine ส่งมาทั้งหมดแล้ว)
+    const historyStatus = document.getElementById('historyStatus');
+    const historySearch = document.getElementById('historySearch');
+    const historyCount = document.getElementById('historyCount');
+    let allMyRequests = [];
+
+    function applyHistoryFilter() {
+        const status = historyStatus.value;
+        const ticket = historySearch.value.trim().replace(/^#/, '');
+        const filtered = allMyRequests.filter(item =>
+            (!status || item.status === status) &&
+            (!ticket || String(item.id) === ticket)
+        );
+
+        historyCount.textContent = (status || ticket)
+            ? `พบ ${filtered.length} รายการตามเงื่อนไข`
+            : `ทั้งหมด ${allMyRequests.length} รายการ`;
+
+        if (filtered.length === 0) {
+            historyContainer.innerHTML = '<p class="text-center text-gray-500 py-4 font-medium">ไม่พบรายการที่ตรงกับเงื่อนไข</p>';
+            return;
+        }
+        renderHistory(filtered);
+    }
+
+    historyStatus.addEventListener('change', applyHistoryFilter);
+    historySearch.addEventListener('input', applyHistoryFilter);
 
     async function loadRequests() {
         try {
@@ -176,8 +207,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             latestContent.style.display = 'block';
             historyContainer.style.display = 'block';
 
+            allMyRequests = myRequests;
             renderLatest(myRequests[0]);
-            renderHistory(myRequests);
+            applyHistoryFilter();
         } catch (err) {
             console.error('Fetch repair history error:', err);
             showNoData();
