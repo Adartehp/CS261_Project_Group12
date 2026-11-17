@@ -214,7 +214,7 @@ class AuthServiceTest {
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus());
     }
 
-    // Test 9: TU ไม่พบรหัสนี้ -> 401
+    // Test 9 (US1-A TC03): TU ไม่พบรหัสนี้ -> 401 พร้อมข้อความไม่พบรหัสประจำตัว
     @Test
     void loginStudent_shouldThrow401_whenTuDoesNotKnowId() {
 
@@ -224,6 +224,7 @@ class AuthServiceTest {
                 () -> authService.loginStudent(EMAIL, ID));
 
         assertEquals(HttpStatus.UNAUTHORIZED, exception.getStatus());
+        assertEquals("ไม่พบรหัสประจำตัวนี้ในระบบ", exception.getMessage());
     }
 
     // Test 10: รหัสนักศึกษาไม่ใช่ตัวเลข 10 หลัก -> 401 โดยไม่เรียก TU
