@@ -294,3 +294,51 @@ body {
     .modal-row .modal-label { width: 90px; font-size: 13px; }
     .modal-input-lg { min-height: 90px; }
 }
+/* ตัวกรองหน้าประวัติเจ้าหน้าที่ (US8) */
+.filter-input {
+    border: 1px solid #c4ddf5;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 14px;
+    background-color: #ffffff;
+    color: #1e293b;
+    width: 100%;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #d63b15;
+    box-shadow: 0 0 0 2px rgba(214, 59, 21, 0.15);
+}
+
+.filter-btn-primary,
+.filter-btn-secondary {
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.filter-btn-primary {
+    background-color: #d63b15;
+    color: #ffffff;
+    border: 1px solid #d63b15;
+}
+
+.filter-btn-primary:hover {
+    background-color: #b8310f;
+}
+
+.filter-btn-secondary {
+    background-color: #ffffff;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.filter-btn-secondary:hover {
+    background-color: #f1f5f9;
+}

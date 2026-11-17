@@ -31,7 +31,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (!status || status === 'PENDING') return 'รอรับเรื่อง';
         if (status === 'IN_PROGRESS') return 'รับเรื่องแล้ว';
         if (status === 'COMPLETED' || status === 'DONE') return 'เสร็จสิ้น';
+        if (status === 'CANCELLED') return 'ยกเลิก';
         return status;
+    }
+
+    function statusColor(status) {
+        if (status === 'DONE' || status === 'COMPLETED') return 'text-green-700';
+        if (status === 'CANCELLED') return 'text-red-600';
+        if (status === 'IN_PROGRESS') return 'text-blue-700';
+        return 'text-amber-600';
     }
 
     function formatDateTime(isoString) {
@@ -88,25 +96,60 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     }
 
+    const filterForm = document.getElementById('filterForm');
+    const filterError = document.getElementById('filterError');
+    const filterReset = document.getElementById('filterReset');
+    const resultCount = document.getElementById('resultCount');
+    const filterFields = ['status', 'area', 'room', 'studentId', 'from', 'to'];
+
+    function showFilterError(message) {
+        filterError.textContent = message;
+        filterError.classList.toggle('hidden', !message);
+    }
+
+    // อ่านค่าตัวกรองจากฟอร์ม แล้วสร้าง query string สำหรับ GET /api/repair-requests
+    function buildFilterQuery() {
+        const formData = new FormData(filterForm);
+        const params = new URLSearchParams();
+        filterFields.forEach((name) => {
+            const value = (formData.get(name) || '').toString().trim();
+            if (value) params.set(name, value);
+        });
+        return params;
+    }
+
     async function loadHistoryRequests() {
+        const params = buildFilterQuery();
+        const from = params.get('from');
+        const to = params.get('to');
+
+        if (from && to && from > to) {
+            showFilterError('วันที่เริ่มต้นต้องไม่มากกว่าวันที่สิ้นสุด');
+            container.innerHTML = '';
+            resultCount.textContent = '';
+            return;
+        }
+        showFilterError('');
+
         container.innerHTML = '<p class="text-center text-gray-500 py-6">กำลังโหลดข้อมูลประวัติ...</p>';
+        resultCount.textContent = '';
 
         try {
-            const allRequests = await callApi('/api/repair-requests');
-
-            // กรองเฉพาะรายการที่รับเรื่องแล้ว
-            const acceptedRequests = (allRequests || []).filter(req =>
-                req.status && req.status !== 'PENDING' && req.status !== 'รอรับเรื่อง'
-            );
+            const query = params.toString();
+            const requests = (await callApi('/api/repair-requests' + (query ? `?${query}` : ''))) || [];
 
             container.innerHTML = '';
+            resultCount.textContent = query
+                ? `พบ ${requests.length} รายการตามเงื่อนไข`
+                : `ทั้งหมด ${requests.length} รายการ`;
 
-            if (acceptedRequests.length === 0) {
-                container.innerHTML = '<p class="text-center text-gray-500 py-6 font-medium">ไม่มีข้อมูล</p>';
+            if (requests.length === 0) {
+                const emptyText = query ? 'ไม่พบรายการที่ตรงกับเงื่อนไข' : 'ไม่มีข้อมูล';
+                container.innerHTML = `<p class="text-center text-gray-500 py-6 font-medium">${emptyText}</p>`;
                 return;
             }
 
-            acceptedRequests.forEach((request) => {
+            requests.forEach((request) => {
                 const acceptedTime = request.acceptedAt || request.updatedAt;
                 const areaThai = areaMap[request.area] || request.area || '-';
 
@@ -122,16 +165,28 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div>แจ้งเมื่อ : <strong>${escapeHtml(formatDateTime(request.createdAt))}</strong></div>
                         <div>รับเรื่องเมื่อ : <strong>${escapeHtml(formatDateTime(acceptedTime))}</strong></div>
                     </div>
-                    <div class="text-sm text-green-700 font-semibold pt-1">สถานะ : ${escapeHtml(statusText(request.status))}</div>
+                    <div class="text-sm ${statusColor(request.status)} font-semibold pt-1">สถานะ : ${escapeHtml(statusText(request.status))}</div>
                 `;
 
                 itemEl.addEventListener('click', () => openDetails(request.id));
                 container.appendChild(itemEl);
             });
         } catch (error) {
-            container.innerHTML = '<p class="text-center text-gray-500 py-6 font-medium">ไม่มีข้อมูล</p>';
+            container.innerHTML = '';
+            resultCount.textContent = '';
+            showFilterError(error.message || 'โหลดข้อมูลไม่สำเร็จ');
         }
     }
+
+    filterForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        loadHistoryRequests();
+    });
+
+    filterReset.addEventListener('click', () => {
+        filterForm.reset();
+        loadHistoryRequests();
+    });
 
     modalOverlay.addEventListener('click', (event) => {
         if (event.target === modalOverlay) closeModal();
