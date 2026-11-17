@@ -77,6 +77,24 @@
         <section>
             <h2 class="text-xl font-bold text-gray-800 mb-3">ประวัติ</h2>
             <div class="bg-[#e4f1fe] border border-[#c4ddf5] p-5 rounded-[20px] shadow-sm">
+                <!-- US9 TC02: กรองตามสถานะ หรือค้นหาเลขที่ใบแจ้งซ่อม -->
+                <div id="historyFilter" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    <label class="flex flex-col gap-1 text-sm text-gray-700">
+                        สถานะ
+                        <select id="historyStatus" class="edit-input">
+                            <option value="">ทั้งหมด</option>
+                            <option value="PENDING">รอรับเรื่อง</option>
+                            <option value="IN_PROGRESS">รับเรื่องแล้ว</option>
+                            <option value="DONE">เสร็จสิ้น</option>
+                            <option value="CANCELLED">ยกเลิก</option>
+                        </select>
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm text-gray-700">
+                        เลขที่ใบแจ้งซ่อม
+                        <input type="search" id="historySearch" class="edit-input" inputmode="numeric" placeholder="เช่น 12">
+                    </label>
+                </div>
+                <p id="historyCount" class="text-sm text-gray-600 mb-3"></p>
                 <div id="history-loading" class="text-center text-gray-500 py-4">กำลังโหลดประวัติ...</div>
                 <div id="history-container" class="space-y-3" style="display: none;"></div>
             </div>

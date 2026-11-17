@@ -342,3 +342,23 @@ body {
 .filter-btn-secondary:hover {
     background-color: #f1f5f9;
 }
+
+/* ปุ่มเปลี่ยนสถานะในป็อปอัพรายละเอียด (US7) */
+.status-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.status-actions.hidden {
+    display: none;
+}
+
+.filter-btn-primary:disabled,
+.filter-btn-secondary:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}

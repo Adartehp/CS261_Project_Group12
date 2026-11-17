@@ -20,6 +20,9 @@ public class AuthService {
 
     static final String BAD_CREDENTIALS =
             "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+    // US1-A TC03: TU API ตอบว่าไม่พบรหัสนักศึกษานี้
+    static final String STUDENT_NOT_FOUND =
+            "ไม่พบรหัสประจำตัวนี้ในระบบ";
     static final String TU_UNAVAILABLE =
             "ระบบยืนยันตัวตนของมหาวิทยาลัยไม่พร้อมใช้งาน กรุณาลองใหม่";
     static final String STUDENT_ON_STAFF =
@@ -62,7 +65,7 @@ public class AuthService {
         try {
             info = tuApiClient.getStudentInfo(cleanId)
                     .orElseThrow(() -> new AuthException(
-                            HttpStatus.UNAUTHORIZED, BAD_CREDENTIALS));
+                            HttpStatus.UNAUTHORIZED, STUDENT_NOT_FOUND));
         } catch (TuApiUnavailableException e) {
             throw new AuthException(HttpStatus.SERVICE_UNAVAILABLE, TU_UNAVAILABLE);
         }

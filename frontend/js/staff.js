@@ -67,29 +67,85 @@ document.addEventListener('DOMContentLoaded', async () => {
         modalOverlay.classList.remove('active');
     }
 
+    // US7: ปุ่มเปลี่ยนสถานะในป็อปอัพรายละเอียด
+    const statusActions = document.getElementById('statusActions');
+    const staffNote = document.getElementById('staffNote');
+    const statusError = document.getElementById('statusError');
+    const doneRequestBtn = document.getElementById('doneRequestBtn');
+    const cancelRequestBtn = document.getElementById('cancelRequestBtn');
+    let currentRequest = null;
+
+    function showStatusError(message) {
+        statusError.textContent = message;
+        statusError.classList.toggle('hidden', !message);
+    }
+
+    // ซ่อมเสร็จได้เฉพาะ IN_PROGRESS ยกเลิกได้เมื่อ PENDING หรือ IN_PROGRESS (ตาม state diagram)
+    function renderStatusActions(request) {
+        const canDone = request.status === 'IN_PROGRESS';
+        const canCancel = request.status === 'PENDING' || request.status === 'IN_PROGRESS';
+        statusActions.classList.toggle('hidden', !canDone && !canCancel);
+        doneRequestBtn.classList.toggle('hidden', !canDone);
+        cancelRequestBtn.classList.toggle('hidden', !canCancel);
+        staffNote.value = '';
+        showStatusError('');
+    }
+
+    async function changeStatus(newStatus) {
+        if (!currentRequest) return;
+        const label = newStatus === 'DONE' ? 'ซ่อมเสร็จแล้ว' : 'ยกเลิกคำร้อง';
+        if (!confirm(`ยืนยันเปลี่ยนสถานะเป็น "${label}" ใช่หรือไม่?`)) return;
+
+        doneRequestBtn.disabled = true;
+        cancelRequestBtn.disabled = true;
+        try {
+            await callApi(`/api/repair-requests/${currentRequest.id}/status`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus, staffNote: staffNote.value.trim() || null })
+            });
+            closeModal();
+            loadHistoryRequests();
+        } catch (error) {
+            showStatusError(error.message);
+        } finally {
+            doneRequestBtn.disabled = false;
+            cancelRequestBtn.disabled = false;
+        }
+    }
+
+    doneRequestBtn.addEventListener('click', () => changeStatus('DONE'));
+    cancelRequestBtn.addEventListener('click', () => changeStatus('CANCELLED'));
+
     async function openDetails(id) {
         modalItem.textContent = 'กำลังโหลด...';
         modalDescription.textContent = '';
         submitBtn.textContent = 'ปิด';
         submitBtn.onclick = closeModal;
+        currentRequest = null;
+        statusActions.classList.add('hidden');
         modalOverlay.classList.add('active');
 
         try {
             const request = await callApi(`/api/repair-requests/${id}`);
-            const acceptedTime = request.acceptedAt || request.updatedAt;
+            currentRequest = request;
             const areaThai = areaMap[request.area] || request.area || '-';
-
-            modalItem.textContent = request.repairItem || '-';
-            modalDescription.style.whiteSpace = 'pre-wrap';
-            modalDescription.textContent = [
+            const lines = [
                 `รหัสนักศึกษา : ${request.studentId || '-'}`,
                 `ห้อง : ${request.roomNumber || '-'}`,
                 `พื้นที่ : ${areaThai}`,
                 `รายละเอียด : ${request.description || '-'}`,
                 `แจ้งเมื่อ : ${formatDateTime(request.createdAt)}`,
-                `รับเรื่องเมื่อ : ${formatDateTime(acceptedTime)}`,
-                `สถานะ : ${statusText(request.status)}`
-            ].join('\n');
+                `รับเรื่องเมื่อ : ${request.acceptedAt ? formatDateTime(request.acceptedAt) : 'ยังไม่รับเรื่อง'}`
+            ];
+            if (request.completedAt) lines.push(`ซ่อมเสร็จเมื่อ : ${formatDateTime(request.completedAt)}`);
+            lines.push(`สถานะ : ${statusText(request.status)}`);
+            if (request.staffNote) lines.push(`หมายเหตุ : ${request.staffNote}`);
+
+            modalItem.textContent = request.repairItem || '-';
+            modalDescription.style.whiteSpace = 'pre-wrap';
+            modalDescription.textContent = lines.join('\n');
+            renderStatusActions(request);
         } catch (error) {
             modalItem.textContent = 'โหลดรายละเอียดไม่สำเร็จ';
             modalDescription.textContent = error.message;
@@ -150,7 +206,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
 
             requests.forEach((request) => {
-                const acceptedTime = request.acceptedAt || request.updatedAt;
+                const acceptedTime = request.acceptedAt ? formatDateTime(request.acceptedAt) : 'ยังไม่รับเรื่อง';
                 const areaThai = areaMap[request.area] || request.area || '-';
 
                 const itemEl = document.createElement('div');
@@ -163,7 +219,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="text-sm text-gray-800">พื้นที่ : <strong>${escapeHtml(areaThai)}</strong> | รายการซ่อม : <strong>${escapeHtml(request.repairItem || '-')}</strong></div>
                     <div class="text-xs text-gray-600 pt-1 border-t border-gray-100 space-y-1">
                         <div>แจ้งเมื่อ : <strong>${escapeHtml(formatDateTime(request.createdAt))}</strong></div>
-                        <div>รับเรื่องเมื่อ : <strong>${escapeHtml(formatDateTime(acceptedTime))}</strong></div>
+                        <div>รับเรื่องเมื่อ : <strong>${escapeHtml(acceptedTime)}</strong></div>
                     </div>
                     <div class="text-sm ${statusColor(request.status)} font-semibold pt-1">สถานะ : ${escapeHtml(statusText(request.status))}</div>
                 `;
